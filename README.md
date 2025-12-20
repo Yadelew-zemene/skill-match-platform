@@ -31,3 +31,19 @@ Employers post job descriptions, and the system ranks candidates based on skill 
 
 ## System Flow
 Candidate → Upload Resume → AI Parsing → Stored Skills → Match Engine → Ranked Candidates
+Visualizing system flow:
+*---------*         *-----------*        *----------------*
+|candidate|-------->|Ai parising| ------>|Extracted Skills|
+*---------*         *-----------*        *----------------*
+                                             |
+                                             |
+                                             ^
+                                       *----------------*
+                                       | Matching process|
+                                       *-----------------*
+                                                ||
+                                                |
+*---------*         *-----------*        *----------------*
+|Employer|-------->|Post job| ------>|Job skills|
+*---------*         *-----------*        *----------------*
+
