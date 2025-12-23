@@ -11,7 +11,8 @@ app.get("/health", (req, res) => {
     
 });
 app.get("/test-db", async (req, res) => {
-        try {
+    try {
+            //this is for testing purpose
             const [rows] = await pool.query("SELECT 1")
             res.json({ success: true, massage: "Database connected" });
         
