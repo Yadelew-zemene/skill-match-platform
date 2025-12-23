@@ -1,6 +1,5 @@
 import { useState } from 'react'
 
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
@@ -8,7 +7,7 @@ function App() {
 
   return (
     
-     <h1> Hello from skillmatch</h1>
+     <h1> Wellcome to SkillMatch</h1>
    
   )
 }

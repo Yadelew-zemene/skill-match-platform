@@ -89,4 +89,19 @@ Visualizing system flow:
 - Frontend initialized with React (Vite)
 - Clean folder structure
 - Health check API implemented (`/health`)
+## Databse Setup(MYSQL)
+### completed
+Restart WAMP server
+Created skillmatch datadabase
+Designed and created core tables:
+users,resumes,jobs,resume_skills,job_skills,match_scores
+Added MYSQL connection using mysql2
+created database connection utility(src/config/db.js)
+### Deliverates:
+SQL schema file
+Mysql database connection setup
+Initial model structure for database access
+### Current Status
+database connected successfully
+Ready to implement authentiation and cors APIs
 
