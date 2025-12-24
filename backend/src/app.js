@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from "cors"
 import pool from './config/db.js';
+import authRoutes from './routes/auth.routes.js'
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/auth", authRoutes);
 app.get("/health", (req, res) => {
     res.status(200).json({ status: "ok", message: "Skill match running" })
 
@@ -18,6 +20,6 @@ app.get("/test-db", async (req, res) => {
         
         } catch (error) {
             res.status(500).json({ success: false, error: error.message });
-    }
+    } 
 })
 export default app;

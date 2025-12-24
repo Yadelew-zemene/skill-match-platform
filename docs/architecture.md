@@ -194,5 +194,3 @@ SkillMatch is designed as a clean, modular full-stack system where:
 * Backend handles logic 
 * Frontend handles user experience
 * Database ensures structure
-
- 
