@@ -1,12 +1,19 @@
 import express from 'express';
 import cors from "cors"
+
 import pool from './config/db.js';
 import authRoutes from './routes/auth.routes.js'
+import resumeRoutes from "./routes/resume.routes.js"
+import path from "path";
+
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use("/auth", authRoutes);
+
+app.use("/uploads", express.static("uploads"));
+
 app.get("/health", (req, res) => {
     res.status(200).json({ status: "ok", message: "Skill match running" })
 
@@ -22,4 +29,9 @@ app.get("/test-db", async (req, res) => {
             res.status(500).json({ success: false, error: error.message });
     } 
 })
+app.post("/test-upload", (req, res) => {
+  res.json({ message: "test route works" });
+});
+app.use("/auth", authRoutes);
+app.use("/resumes",resumeRoutes);
 export default app;
