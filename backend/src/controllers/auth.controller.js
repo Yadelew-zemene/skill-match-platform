@@ -17,7 +17,7 @@ export const register = async (req, res) => {
             password: hashedPassword,
             role
         });
-        res.status(500).json({ message: "User Registered successfully" });
+        res.status(201).json({ message: "User Registered successfully" });
 
 
 
@@ -29,12 +29,19 @@ export const register = async (req, res) => {
 }
 export const login = async (req, res) => {
     try {
+        console.log("BODY:", req.body); 
         const { email, password } = req.body;
+        if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required" });
+    }
+
         const user = await User.findByEmail(email);
+        // console.log("USER FOUND:", user); 
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
         const isMatch = await bcrypt.compare(password, user.password);
+         console.log("PASSWORD MATCH:", isMatch)
         if (!isMatch) {
             return    res.status(401).json({ message: "Invalid credentials" });
         }
@@ -45,6 +52,7 @@ export const login = async (req, res) => {
         });
         res.json({ token });
     } catch (error) {
+        console.error("LOGIN ERROR:", error);
         res.status(500).json({ message: "login faild" });
     }
 }

@@ -11,6 +11,7 @@ import path from "path";
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static("uploads"));
 
@@ -35,3 +36,4 @@ app.post("/test-upload", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/resumes",resumeRoutes);
 export default app;
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6ImNhbmRpZGF0ZSIsImlhdCI6MTc2Njg0MDQzMiwiZXhwIjoxNzY2OTI2ODMyfQ.-cj5Hyv2yVKPU7RlRJpgO564fn0VvKIpk5huwV8bnnc

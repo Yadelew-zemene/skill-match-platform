@@ -59,7 +59,7 @@ skillmatch/
 │
 └── README.md
 
-## Database Schema
+## Database Schema/tables
 - `users` (id, name, email, password, role)
 - `resumes` (user_id, file_path, extracted_text)
 - `jobs` (employer_id, title, description)
@@ -95,7 +95,7 @@ Restart WAMP server
 Created skillmatch datadabase
 Designed and created core tables:
 users,resumes,jobs,resume_skills,job_skills,match_scores
-Added MYSQL connection using mysql2
+Added MYSQL connection using mysql2 using pool
 created database connection utility(src/config/db.js)
 ### Deliverates:
 SQL schema file

@@ -6,7 +6,7 @@ export const uploadResume = async (req, res) => {
 
         }
         const filePath = req.file.path;
-        const userId = req.body.user.id;;
+        const userId = req.user.id;
         await Resume.create({ userId, filePath });
         res.status(201).json({
             message: "file Uploaded succcesfully",

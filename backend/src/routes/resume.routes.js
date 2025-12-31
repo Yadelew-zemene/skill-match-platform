@@ -9,7 +9,7 @@ const router=express.Router()
 router.post("/upload",
   authMiddleware,
   roleMiddleware("candidate"),
-  upload.single("resume"),
+  upload.single("resumes"),
          uploadResume
 );
 export default router;
