@@ -56,3 +56,11 @@ export const login = async (req, res) => {
         res.status(500).json({ message: "login faild" });
     }
 }
+// {
+//    "name":"Yadelew",
+//    "email":"getanehzemene@skillmatch.com",
+//    "password":"222222",
+//    "role":"candidate"
+// "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Nywicm9sZSI6ImNhbmRpZGF0ZSIsImlhdCI6MTc2OTI0MDQyMSwiZXhwIjoxNzY5MzI2ODIxfQ.zOYdk-UXnzLPdV6LeTmBRaOaZ1GhlgGsZPVP4y9N_Uo"
+
+// }
