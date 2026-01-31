@@ -1,4 +1,6 @@
 import Resume from "../models/resume.model.js";
+import { parseSkills } from "../services/resumeParser.service.js";
+import { saveResumeSkills } from "../services/resumeSkill.service.js";
 export const uploadResume = async (req, res) => {
     try {
         if (!req.file) {
@@ -18,4 +20,20 @@ export const uploadResume = async (req, res) => {
         res.status(500).json({ message: "Resume uploading faild" });
     }
 
+};
+export const processResume = async (req, res) => {
+  try {
+    const { resumeId, extractedText } = req.body;
+
+    const skills = await parseSkills(extractedText);
+
+    await saveResumeSkills(resumeId, skills);
+
+    res.json({
+      message: "Resume processed successfully",
+      skills
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Skill extraction failed" });
+  }
 };
