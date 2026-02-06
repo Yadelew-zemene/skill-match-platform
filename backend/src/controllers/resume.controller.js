@@ -28,6 +28,8 @@ export const processResume = async (req, res) => {
     const skills = await parseSkills(extractedText);
 
     await saveResumeSkills(resumeId, skills);
+    console.log("Resume text extracted");
+console.log("Skills from Python:", skills);
 
     res.json({
       message: "Resume processed successfully",

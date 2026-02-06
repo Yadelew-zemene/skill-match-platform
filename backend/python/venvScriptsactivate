@@ -1,1 +1,24 @@
 spacy
+{
+   "name":"Abebe",
+   "email":"abe@skillmatch.com",
+   "password":"333333",
+   "role":"candidate"
+
+
+}
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwicm9sZSI6ImNhbmRpZGF0ZSIsImlhdCI6MTc3MDM5NDg5NiwiZXhwIjoxNzcwNDgxMjk2fQ.nDeZGZFYSphW6n5labxwa5pXpoyqsbMYQiBF6fmznYQ
+
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwicm9sZSI6ImVtcGxveWVyIiwiaWF0IjoxNzcwMzk1OTc5LCJleHAiOjE3NzA0ODIzNzl9.bZrnpZxsP6OWqavrAD8c5pdXbP96d62N0l99Zy6jQkA
+
+
+{
+   "name":"Samuel",
+   "email":"sami@skillmatch.com",
+   "password":"555555",
+   "role":"candidate"
+
+
+}
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsInJvbGUiOiJjYW5kaWRhdGUiLCJpYXQiOjE3NzAzOTg1NjcsImV4cCI6MTc3MDQ4NDk2N30.Kzd79KHoD0N_vujG4yIhpAc2WGi-m4-h7wdx3ShFV4w

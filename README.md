@@ -104,4 +104,7 @@ Initial model structure for database access
 ### Current Status
 database connected successfully
 Ready to implement authentiation and cors APIs
+### AI services
+When a candidate uploads a resume, Node extracts text, sends it to a Python NLP service,
+ which extracts skills and stores them in resume_skills. Matching comes later.
 

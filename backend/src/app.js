@@ -33,6 +33,22 @@ app.get("/test-db", async (req, res) => {
 app.post("/test-upload", (req, res) => {
   res.json({ message: "test route works" });
 });
+app.post("/debug/parse", async (req, res) => {
+  const skills = await parseSkills(req.body.text);
+  res.json(skills);
+});
+
+app.post("/jobs", async (req, res) => {
+  const data = req.body;   // ✅ correct
+  res.status(200).json({
+    success: true,
+    received: data
+  });
+});
+
+    
+    
+
 app.use("/auth", authRoutes);
 app.use("/resumes",resumeRoutes);
 export default app;

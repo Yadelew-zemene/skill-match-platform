@@ -5,9 +5,8 @@ export const parseSkills = (resumeText) => {
   return new Promise((resolve, reject) => {
     const scriptPath = path.join(
       process.cwd(),
-      "backend",
       "python",
-      "parser.py"
+      "skill_extractor.py"
     );
 
     const python = spawn("python", [scriptPath]);

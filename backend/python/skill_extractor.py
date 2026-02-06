@@ -1,11 +1,14 @@
 import sys
 import json
 import spacy
+import os
 
 nlp = spacy.load("en_core_web_sm")
 
-# Load skills list
-with open("skills.json", "r") as f:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SKILLS_PATH = os.path.join(BASE_DIR, "skills_list.json")
+
+with open(SKILLS_PATH, "r") as f:
     SKILLS = json.load(f)
 
 def extract_skills(text):
