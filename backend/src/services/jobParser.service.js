@@ -1,5 +1,5 @@
 import { parseSkills } from "./resumeParser.service.js";
 
-export const parseJobSkills = async (jobDescription) => {
-  return parseSkills(jobDescription);
+export const parseJobSkills = (description) => {
+  return parseSkills(description);   // TEXT, not file
 };

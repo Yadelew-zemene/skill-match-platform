@@ -1,8 +1,11 @@
+import Job from "../models/job.model.js";
+
 import { parseJobSkills } from "../services/jobParser.service.js";
 import { saveJobSkills } from "../services/jobSkill.service.js";
 
 export const createJob = async (req, res) => {
   try {
+    
     const jobId = await Job.create({
       employerId: req.user.id,
       title: req.body.title,
@@ -14,6 +17,11 @@ export const createJob = async (req, res) => {
 
     res.status(201).json({ jobId, skills });
   } catch (err) {
-    res.status(500).json({ message: "Job creation failed" });
-  }
+  console.error("JOB CREATE ERROR 👉", err);
+  res.status(500).json({
+    message: "Job creation failed",
+    error: err.message || err
+  });
+}
+
 };

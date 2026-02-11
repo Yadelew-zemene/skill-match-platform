@@ -1,36 +1,42 @@
 import { spawn } from "child_process";
 import path from "path";
 
-export const parseSkills = (resumeText) => {
+export const parseSkills = (text) => {
   return new Promise((resolve, reject) => {
-    const scriptPath = path.join(
+    const pythonScriptPath = path.resolve(
       process.cwd(),
       "python",
       "skill_extractor.py"
     );
 
-    const python = spawn("python", [scriptPath]);
+    const python = spawn("python", [pythonScriptPath]);
 
-    let data = "";
-
-    python.stdin.write(resumeText);
-    python.stdin.end();
-
-    python.stdout.on("data", (chunk) => {
-      data += chunk.toString();
+    let output = "";
+      let errorOutput = "";
+    python.stdout.on("data", (data) => {
+      output += data.toString();
     });
 
-    python.stderr.on("data", (err) => {
-      console.error("Python error:", err.toString());
-      reject(err.toString());
-    });
+  
 
-    python.on("close", () => {
+   
+
+   python.stderr.on("data", (err) => {
+      errorOutput += err.toString();
+    });
+       python.on("close", () => {
+      if (errorOutput) {
+        return reject(errorOutput);
+      }
       try {
-        resolve(JSON.parse(data));
-      } catch (e) {
+        resolve(JSON.parse(output));
+      } catch {
         reject("Failed to parse skills");
       }
     });
+
+   
+  python.stdin.write(text);
+    python.stdin.end();
   });
-};
+}

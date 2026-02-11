@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from "cors"
-
-import pool from './config/db.js';
 import authRoutes from './routes/auth.routes.js'
 import resumeRoutes from "./routes/resume.routes.js"
-import path from "path";
+import jobRoutes from "./routes/job.routes.js";
 
 
 
@@ -14,41 +12,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static("uploads"));
-
-app.get("/health", (req, res) => {
-    res.status(200).json({ status: "ok", message: "Skill match running" })
-
-    
-});
-app.get("/test-db", async (req, res) => {
-    try {
-            //this is for testing purpose
-            const [rows] = await pool.query("SELECT 1")
-            res.json({ success: true, massage: "Database connected" });
-        
-        } catch (error) {
-            res.status(500).json({ success: false, error: error.message });
-    } 
-})
-app.post("/test-upload", (req, res) => {
-  res.json({ message: "test route works" });
-});
-app.post("/debug/parse", async (req, res) => {
-  const skills = await parseSkills(req.body.text);
-  res.json(skills);
-});
-
-app.post("/jobs", async (req, res) => {
-  const data = req.body;   // ✅ correct
-  res.status(200).json({
-    success: true,
-    received: data
-  });
-});
-
-    
-    
-
 app.use("/auth", authRoutes);
-app.use("/resumes",resumeRoutes);
+app.use("/resumes", resumeRoutes);
+
+
+app.use("/jobs", jobRoutes);
+
 export default app;
