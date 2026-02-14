@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import path from "path";
 
-export const parseSkills = (text) => {
+export const parseSkills = (resumePath) => {
   return new Promise((resolve, reject) => {
     const pythonScriptPath = path.resolve(
       process.cwd(),
@@ -9,11 +9,14 @@ export const parseSkills = (text) => {
       "skill_extractor.py"
     );
 
-    const python = spawn("python", [pythonScriptPath]);
+    const py = spawn("python", [
+      pythonScriptPath,
+      "file",
+      resumePath]);
 
     let output = "";
-      let errorOutput = "";
-    python.stdout.on("data", (data) => {
+    let errorOutput = "";
+    py.stdout.on("data", (data) => {
       output += data.toString();
     });
 
@@ -21,22 +24,19 @@ export const parseSkills = (text) => {
 
    
 
-   python.stderr.on("data", (err) => {
-      errorOutput += err.toString();
+  py.stderr.on("data", (err) => {
+      console.error("Python error:", err.toString());
     });
-       python.on("close", () => {
-      if (errorOutput) {
-        return reject(errorOutput);
+         py.on("close", (code) => {
+      if (code !== 0) {
+        return reject(new Error("Python process failed"));
       }
       try {
-        resolve(JSON.parse(output));
-      } catch {
-        reject("Failed to parse skills");
+        const skills = JSON.parse(output);
+        resolve(skills);
+      } catch (e) {
+        reject(new Error("Failed to parse skills JSON"));
       }
     });
-
-   
-  python.stdin.write(text);
-    python.stdin.end();
   });
-}
+};

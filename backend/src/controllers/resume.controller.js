@@ -1,7 +1,7 @@
 import Resume from "../models/resume.model.js";
 import { parseSkills } from "../services/resumeParser.service.js";
 import { saveResumeSkills } from "../services/resumeSkill.service.js";
-import { parsePdfText } from "../services/pdfParser.service.js";
+
 
 export const uploadResume = async (req, res) => {
   try {
@@ -19,23 +19,18 @@ export const uploadResume = async (req, res) => {
     });
 
     const resumeId = result.insertId;
-
-   
-   
-    const extractedText = await parsePdfText(filePath);
-
-    
-    const skills = await parseSkills(extractedText);
+    const skills = await parseSkills(req.file.path);
+    console.log("Extracted skills:", skills);
 
     await saveResumeSkills(resumeId, skills);
 
-    res.status(201).json({
-      message: "Resume uploaded & processed",
-      resumeId,
+     res.json({
+      message: "Resume processed successfully",
       skills
     });
+
   } catch (err) {
-    console.error("❌ Resume upload error:", err);
-    res.status(500).json({ message: "Resume upload failed" });
+    console.error("Resume upload error:", err);
+    res.status(500).json({ message: "Resume processing failed" });
   }
 };
