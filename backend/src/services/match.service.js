@@ -76,3 +76,16 @@ export const matchJobToAllResumes = async (jobId) => {
     );
   }
 };
+export const getCandidatesForJob = async (jobId) => {
+  const [rows] = await db.query(
+    `SELECT u.id AS user_id, u.name, u.email, MAX(m.score) AS score
+     FROM resumes r
+     JOIN users u ON r.user_id = u.id
+     JOIN match_scores m ON r.id = m.resume_id
+     WHERE m.job_id = ?
+     GROUP BY u.id, u.name, u.email
+     ORDER BY score DESC`,
+    [jobId]
+  );
+  return rows;
+};

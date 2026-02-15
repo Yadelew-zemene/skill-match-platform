@@ -3,17 +3,9 @@ import path from "path";
 
 export const parseJobSkills = (description) => {
   return new Promise((resolve, reject) => {
-    const pythonScriptPath = path.resolve(
-      process.cwd(),
-      "python",
-      "skill_extractor.py"
-    );
+    const pythonScriptPath = path.resolve( process.cwd(),"python","skill_extractor.py");
 
-    const py = spawn("python", [
-      pythonScriptPath,
-      "text",        // MODE
-      description    
-    ]);
+    const py = spawn("python", [pythonScriptPath,"text",description ]);
 
     let output = "";
 

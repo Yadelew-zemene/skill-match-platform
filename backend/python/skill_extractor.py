@@ -5,7 +5,6 @@ import fitz
 
 
 BASE_DIR = Path(__file__).parent
-
 SKILLS_FILE = BASE_DIR / "skills_list.json"
 
 with open(SKILLS_FILE, "r") as f:
@@ -25,7 +24,7 @@ if __name__ == "__main__":
 
     if mode == "file":
         file_path = sys.argv[2]
-        text = extract_text_from_pdf(file_path)
+        text = extract_text(file_path)
 
     elif mode == "text":
         text = sys.argv[2]

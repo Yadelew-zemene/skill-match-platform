@@ -104,7 +104,43 @@ Initial model structure for database access
 ### Current Status
 database connected successfully
 Ready to implement authentiation and cors APIs
-### AI services
-When a candidate uploads a resume, Node extracts text, sends it to a Python NLP service,
- which extracts skills and stores them in resume_skills. Matching comes later.
+
+### Features Implemented
+
+1. User & Auth
+
+      Candidate and employer registration & login
+      JWT-based authentication & role-based access control
+      Password hashing & validation
+
+2. Resume Upload
+
+      Candidates can upload PDF or DOCX resumes
+      Automatic text extraction from uploaded files
+      Skills parsed from resumes using Python skill extractor
+      Skills stored in MySQL database
+
+3. Job Posting
+
+        Employers can post jobs with title and description
+        Job skills automatically extracted from text
+        Skills stored in database
+
+4. Automatic Matching
+
+      Resume → All Jobs: When a resume is uploaded, it is matched against all available jobs
+      Job → All Resumes: When a job is posted, it is matched against all uploaded resumes
+      Match score calculation (percentage based on skill overlap)
+      Match scores stored in database
+
+5. Recruiter View
+
+      View candidates matched to a job, sorted by score descending
+      Quickly see top candidates
+
+6. Skill Extraction Engine
+
+      Python-based skill extractor for:PDF/DOCX resume files
+      Raw text (job descriptions)
+      Communicates with Node.js backend via child process
 
