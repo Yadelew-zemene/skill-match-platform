@@ -34,3 +34,16 @@ export const uploadResume = async (req, res) => {
         res.status(500).json({ message: "Resume processing failed" });
   }
 };
+export const getMyResumes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const resumes = await Resume.findAllByUserId(userId);
+
+    res.status(200).json(resumes);
+
+  } catch (error) {
+    console.error("Get My Resumes Error:", error);
+    res.status(500).json({ message: "Failed to fetch resumes" });
+  }
+};

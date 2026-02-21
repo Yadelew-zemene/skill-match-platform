@@ -5,4 +5,5 @@ const router = express.Router();
 
 router.get("/job/:jobId/candidates", viewCandidates);
 
+
 export default router;

@@ -1,5 +1,5 @@
 import express from "express";
-import { uploadResume } from "../controllers/resume.controller.js";
+import { uploadResume,getMyResumes} from "../controllers/resume.controller.js";
 import upload from "../middlewares/upload.middleware.js";
 import authMiddleware from '../middlewares/auth.middleware.js'
 import roleMiddleware from "../middlewares/role.middleware.js";
@@ -11,5 +11,11 @@ router.post("/upload",
   roleMiddleware("candidate"),
   upload.single("resume"),
   uploadResume
+);
+router.get(
+  "/me",
+  authMiddleware,
+  roleMiddleware("candidate"),
+  getMyResumes
 );
 export default router;

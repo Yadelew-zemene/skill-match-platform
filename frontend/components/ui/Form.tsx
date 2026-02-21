@@ -1,9 +1,18 @@
-import React from "react"
+"use client";
 
-export const Form = ({ children }: { children: React.ReactNode }) => {
+import { ReactNode } from "react";
+
+interface FormProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function Form({ children, className }: FormProps) {
   return (
-    <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+    <div
+      className={`w-full max-w-md bg-white shadow-lg rounded-2xl p-8 border ${className}`}
+    >
       {children}
     </div>
-  )
+  );
 }
