@@ -1,4 +1,5 @@
 import Resume from "../models/resume.model.js";
+import MatchScore from "../models/score.model.js"
 import { parseSkills } from "../services/resumeParser.service.js";
 import { saveResumeSkills } from "../services/resumeSkill.service.js";
 
@@ -38,12 +39,22 @@ export const getMyResumes = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const resumes = await Resume.findAllByUserId(userId);
+    const resume = await Resume.findAllByUserId(userId);
 
-    res.status(200).json(resumes);
+    res.status(200).json(resume);
 
   } catch (error) {
     console.error("Get My Resumes Error:", error);
     res.status(500).json({ message: "Failed to fetch resumes" });
+  }
+};
+export const getResumeMatches = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const matches = await MatchScore.findByResumeId(id); // return all jobs & scores
+    res.json(matches);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch matches" });
   }
 };

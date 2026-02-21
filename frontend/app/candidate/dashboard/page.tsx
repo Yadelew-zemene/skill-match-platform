@@ -69,7 +69,7 @@ const CandidateDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {resumes.map((resume) => (
           <div key={resume.id} className="p-4 bg-white rounded shadow">
-            <h2 className="font-semibold">Resume #{resume.id}</h2>
+            <h2 className="font-semibold">Resume {resume.id}</h2>
             <p className="text-gray-500 text-sm">{resume.extracted_text?.substring(0, 100)}...</p>
             <button
               onClick={() => loadMatches(resume.id)}
