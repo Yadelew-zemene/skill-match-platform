@@ -1,8 +1,9 @@
 import express from "express";
-import { uploadResume,getMyResumes,getResumeMatches} from "../controllers/resume.controller.js";
+import { uploadResume,getResumeMatches} from "../controllers/resume.controller.js";
 import upload from "../middlewares/upload.middleware.js";
 import authMiddleware from '../middlewares/auth.middleware.js'
 import roleMiddleware from "../middlewares/role.middleware.js";
+
 const router=express.Router()
 
 // 
@@ -12,12 +13,7 @@ router.post("/upload",
   upload.single("resume"),
   uploadResume
 );
-router.get(
-  "/me",
-  authMiddleware,
-  roleMiddleware("candidate"),
-  getMyResumes
-);
+
 router.get(
   "/:id/matches",
   authMiddleware,

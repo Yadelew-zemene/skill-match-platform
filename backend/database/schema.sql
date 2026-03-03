@@ -6,6 +6,7 @@ CREATE TABLE  users(
     name VARCHAR(100) NOT NULL;
     email  VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(225) NOT NULL,
+
     role  ENUM("candidate",'employer') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
@@ -25,7 +26,10 @@ CREATE TABLE  jobs(
     title VARCHAR(150) NOT NULL,
     description LONGTEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    applicatin_link VARCHAR(100) NOT NULL,
+    campanyName VARCHAR(20),
     FOREIGN KEY (employer_id) REFERENCES users(id) ON DELETE CASCADE
+
 
 );
 CREATE TABLE resume_skills(

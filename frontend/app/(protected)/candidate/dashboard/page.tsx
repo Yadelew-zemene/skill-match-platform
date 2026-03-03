@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchResumes, uploadResume, fetchResumeMatches } from "@/services/resume.service";
+import {  uploadResume} from "@/services/resume.service";
 import toast from "react-hot-toast";
 
 interface Resume {
@@ -25,12 +25,6 @@ const CandidateDashboard = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [matches, setMatches] = useState<Record<number, Match[]>>({});
 
-  // Fetch resumes
-  useEffect(() => {
-    fetchResumes()
-      .then(setResumes)
-      .catch(() => toast.error("Failed to fetch resumes"));
-  }, []);
 
   const handleUpload = async () => {
     if (!selectedFile) return toast.error("Select a file");
@@ -43,7 +37,7 @@ const CandidateDashboard = () => {
     }
   };
 
-  const loadMatches = async (resumeId: number) => {
+  const loadMatchedjobs = async (resumeId: number) => {
     try {
       const data = await fetchResumeMatches(resumeId);
       setMatches((prev) => ({ ...prev, [resumeId]: data }));
@@ -94,4 +88,4 @@ const CandidateDashboard = () => {
   );
 };
 
-export default CandidateDashboard;
+ export default CandidateDashboard;

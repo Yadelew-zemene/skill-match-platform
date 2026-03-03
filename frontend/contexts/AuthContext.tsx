@@ -1,5 +1,5 @@
-"use client"; // required in app router
-import { createContext, useContext, useState, ReactNode } from "react";
+"use client"; 
+import { createContext, useContext, useState, ReactNode ,useEffect} from "react";
 
 interface AuthContextType {
   user: any;
@@ -11,8 +11,16 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  
   const [user, setUser] = useState<any>(null);
   const [token, setToken] = useState<string | null>(null);
+  
+    useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
 
   const login = (token: string, user: any) => {
     setToken(token);

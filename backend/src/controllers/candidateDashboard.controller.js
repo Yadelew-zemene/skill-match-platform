@@ -1,0 +1,38 @@
+import { getCandidateDashboardData } from "../services/preferedJobs.service.js";
+
+export const getCandidateDashboard = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const rows = await getCandidateDashboardData(userId);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "No matched jobs found" });
+    }
+
+    // Extract candidate info (same for all rows)
+    const candidate = {
+      id: rows[0].candidate_id,
+      name: rows[0].name,
+      email: rows[0].email,
+    };
+
+    const matchedJobs = rows.map((row) => ({
+      jobId: row.job_id,
+      title: row.title,
+      company: row.company,
+      description: row.description,
+      applicationLink: row.application_link,
+      score: row.score,
+    }));
+
+    res.status(200).json({
+      candidate,
+      matchedJobs,
+    });
+
+  } catch (error) {
+    console.error("Dashboard Error:", error);
+    res.status(500).json({ message: "Failed to fetch dashboard" });
+  }
+};

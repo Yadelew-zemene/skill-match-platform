@@ -13,5 +13,4 @@ router.get("/me", authMiddleware, (req, res) => {
     role: req.user.role
   });
 });
-
 export default router;

@@ -11,6 +11,8 @@ export const createJob = async (req, res) => {
           employerId: req.user.id,
           title: req.body.title,
           description: req.body.description,
+          applicatin_link: req.body.applicatin_link,
+          campanyName:req.body.campanyName
         });
 
         const skills = await parseJobSkills(req.body.description);

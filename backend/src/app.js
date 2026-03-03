@@ -5,6 +5,7 @@ import resumeRoutes from "./routes/resume.routes.js"
 import jobRoutes from "./routes/job.routes.js";
 import matchRoutes from "./routes/match.routes.js";
 import candidateRoutes from "./routes/getCandidate.routes.js"
+import candidateDashboardRoutes from "./routes/candidateDashboard.routes.js"
 
 
 
@@ -24,5 +25,6 @@ app.use("/resumes", resumeRoutes);
 app.use("/jobs", jobRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api", candidateRoutes);
+app.use("/", candidateDashboardRoutes);
 
 export default app;

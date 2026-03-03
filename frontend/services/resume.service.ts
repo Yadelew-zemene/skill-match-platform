@@ -1,6 +1,6 @@
 import api from "./api";
 
-// Upload resume file
+
 export const uploadResume = async (file: File) => {
   const formData = new FormData();
   formData.append("resume", file);
@@ -11,17 +11,11 @@ export const uploadResume = async (file: File) => {
     },
   });
 
-  return res.data; // { id, file_path, extracted_text, created_at }
-};
+  return res.data
+}
 
-// Get all resumes for the candidate
-export const fetchResumes = async () => {
-  const res = await api.get("/resumes/me");
-  return res.data; 
-};
-
-// Get matches for a specific resume
-export const fetchResumeMatches = async (resumeId: number) => {
-  const res = await api.get(`/resumes/${resumeId}/matches`);
-  return res.data; 
-};
+// // Get matches for a specific resume
+// export const fetchResumeMatches = async (resumeId: number) => {
+//   const res = await api.get(`/resumes/${resumeId}/matches`);
+//   return res.data; 
+// };
