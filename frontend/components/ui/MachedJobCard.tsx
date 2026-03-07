@@ -2,14 +2,14 @@
 interface MatchedJob {
   job_id: number;
   title: string;
-  company: string; 
+  company?: string; 
   description: string;
   applicationLink: string;
   score: number;
   matched_skills: string[];
 }
 
-const MatchedJobCard = ({ job }: { job: MatchedJob }) => {
+ const MatchedJobCard = ({ job }: { job: MatchedJob }) => {
   return (
     <div className="p-4 bg-white border rounded-xl shadow-sm hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start mb-2">
@@ -39,5 +39,4 @@ const MatchedJobCard = ({ job }: { job: MatchedJob }) => {
     </div>
   );
 };
-
-export default MatchedJobCard;
+export default MatchedJobCard
