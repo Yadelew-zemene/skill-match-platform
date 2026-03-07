@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 app.use("/auth", authRoutes);
 app.use("/resumes", resumeRoutes);
-app.use("/jobs", jobRoutes);
+app.use("/", jobRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api", candidateRoutes);
 app.use("/", candidateDashboardRoutes);

@@ -13,9 +13,3 @@ export const uploadResume = async (file: File) => {
 
   return res.data
 }
-
-// // Get matches for a specific resume
-// export const fetchResumeMatches = async (resumeId: number) => {
-//   const res = await api.get(`/resumes/${resumeId}/matches`);
-//   return res.data; 
-// };

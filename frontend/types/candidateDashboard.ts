@@ -1,6 +1,6 @@
 
 interface MatchedJob {
-  job_id: number;
+  jobId: number;
     title: string;
     campany: string,
     description: string,

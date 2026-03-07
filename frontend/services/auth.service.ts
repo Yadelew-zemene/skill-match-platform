@@ -1,13 +1,9 @@
-import axios from "axios";
-
 import api from "./api";
-
-
 const API_URL = "http://localhost:5000";
 
 export const loginUser = async (email: string, password: string) => {
   const res = await api.post(`${API_URL}/auth/login`, { email, password });
-  return res.data; // { token, user }
+  return res.data; 
 };
 
 export const registerUser = async (

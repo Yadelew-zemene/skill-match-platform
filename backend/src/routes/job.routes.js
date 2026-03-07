@@ -4,6 +4,9 @@ import  authMiddleware  from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/", authMiddleware, createJob);
+router.post(
+    "/employer/post-jobs",
+    authMiddleware,
+    createJob);
 
 export default router;
