@@ -18,3 +18,7 @@ export const fetchEmployerJobs = async (employerId: number) => {
   const res = await api.get(`/jobs/employer/${employerId}`);
   return res.data;
 };
+export const fetchCandidateMatches = async (employerId: number) => {
+  const res = await api.get(`/employer/candidates/${employerId}`);
+  return res.data;
+}
