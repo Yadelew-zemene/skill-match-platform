@@ -15,7 +15,7 @@ export const getCandidateDashboard = async (req, res) => {
       title: row.title,
       company: row.company,
       description: row.description,
-      applicationLink: row.application_link,
+      application_link: row.application_link,
       score: row.score,
     }));
 

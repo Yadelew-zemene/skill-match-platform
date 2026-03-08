@@ -4,7 +4,7 @@ export interface MatchedJob {
   title: string;
   company?: string; 
   description: string;
-  applicationLink: string;
+  application_link: string;
   score: number;
   // matched_skills: string[];
 }

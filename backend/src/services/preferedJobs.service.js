@@ -9,9 +9,9 @@ export const getCandidateDashboardData = async (userId) => {
 
         j.id AS job_id,
         j.title,
-        j.campanyName AS company,
+        j.company AS company,
         j.description,
-        j.applicatin_link AS application_link,
+        j.application_link AS application_link,
 
         m.score
 
