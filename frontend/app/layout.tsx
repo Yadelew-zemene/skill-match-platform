@@ -4,7 +4,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "react-hot-toast"
+import Navbar from "@/components/ui/Navbar";
 
+import Footer from "@/components/ui/Footer";
 
 
 const geistSans = Geist({
@@ -28,8 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="bg-gray-50 min-h-screen">
         <AuthProvider>
+          <Navbar />
           {children}
           <Toaster position="top-right" />
+          <Footer />
         </AuthProvider>
       </body>
     </html>

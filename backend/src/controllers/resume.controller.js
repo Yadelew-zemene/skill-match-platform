@@ -12,6 +12,8 @@ export const uploadResume = async (req, res) => {
 
         const userId = req.user.id;
         const filePath = req.file.path;
+       
+    
 
         
         const result = await Resume.create({

@@ -8,12 +8,12 @@ import toast from "react-hot-toast";
 
 
 interface CandidateMatch {
-  job_title: string;
-  candidate_name: string;
-  candidate_email: string;
+  title: string;
+  name: string;
+  email: string;
   score: number;
-  applied_date: string;
-  resume_url: string;
+  created_at: string;
+  file_path: string;
 }
 
 export default function CandidatesPage() {
@@ -39,16 +39,16 @@ export default function CandidatesPage() {
     loadData();
   }, [user?.id]);
 
-  if (loading) return (
-    <div className="p-8 text-center animate-pulse text-gray-500 font-medium">
-      Scanning talent pool...
-    </div>
-  );
+  // if (loading) return (
+  //   <div className="p-8 text-center animate-pulse text-gray-500 font-medium">
+  //     Scanning talent pool...
+  //   </div>
+  // );
 
   // Group candidates by job title
   const groupedMatches = matches.reduce((acc, match) => {
-    if (!acc[match.job_title]) acc[match.job_title] = [];
-    acc[match.job_title].push(match);
+    if (!acc[match.title]) acc[match.title] = [];
+    acc[match.title].push(match);
     return acc;
   }, {} as Record<string, CandidateMatch[]>);
 
@@ -84,10 +84,10 @@ export default function CandidatesPage() {
                       {CANDIDATE_ICONS.User}
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">{candidate.candidate_name}</h4>
+                      <h4 className="font-bold text-gray-900">{candidate.name}</h4>
                       <p className="text-sm text-gray-500 flex items-center gap-1">
                         {/* Using constant Mail Icon */}
-                        {CANDIDATE_ICONS.Mail} {candidate.candidate_email}
+                        {CANDIDATE_ICONS.Mail} {candidate.email}
                       </p>
                     </div>
                   </div>
@@ -101,18 +101,17 @@ export default function CandidatesPage() {
 
                   <div className="text-sm text-gray-500 w-full md:w-1/4 text-center md:text-left">
                     <p className="font-medium">Applied on:</p>
-                    <p>{new Date(candidate.applied_date).toLocaleDateString()}</p>
+                    <p>{new Date(candidate.created_at).toLocaleDateString()}</p>
                   </div>
 
                   <div className="w-full md:w-auto mt-4 md:mt-0">
                     <a 
-                      href={candidate.resume_url} 
+                      href={candidate.file_path} 
                       download 
                       target="_blank"
                       className="flex items-center justify-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors w-full"
                     >
-                    
-                      {CANDIDATE_ICONS.Download}
+                     {CANDIDATE_ICONS.Download}
                       Resume
                     </a>
                   </div>

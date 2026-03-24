@@ -1,4 +1,4 @@
-
+"use client"
 import { MatchedJob } from "@/types/job";
 
 

@@ -11,14 +11,26 @@ export default function JobsPostedPage() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user?.id) {
-      fetchEmployerJobs(user.id)
-        .then(setJobs)
-        .catch(() => toast.error("Failed to load jobs"))
-        .finally(() => setLoading(false));
-    }
-  }, [user]);
+ useEffect(() => {
+  // 1. Debugging: Log the user to make sure the ID exists
+  console.log("Current User:", user);
+
+  if (!user?.id) return;
+
+  setLoading(true);
+  fetchEmployerJobs(user.id)
+    .then((data) => { // 2. Debugging: See exactly what the backend is sending
+      console.log("Received Jobs:", data);
+      
+      
+      setJobs(Array.isArray(data) ? data : data.jobs || []);
+    })
+    .catch((err) => {
+      console.error(err);
+      toast.error("Failed to load jobs");
+    })
+    .finally(() => setLoading(false));
+}, [user?.id]); 
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -56,7 +68,7 @@ export default function JobsPostedPage() {
                 <tr key={job.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-bold text-gray-900">{job.title}</div>
-                    <div className="text-sm text-gray-400">{job.companyName}</div>
+                    <div className="text-sm text-gray-400">{job.company}</div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
                     <div className="flex items-center gap-1.5">
@@ -66,7 +78,7 @@ export default function JobsPostedPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded">
-                      0 Applied
+                     {job.applicants} Matched
                     </span>
                   </td>
                   <td className="px-6 py-4">

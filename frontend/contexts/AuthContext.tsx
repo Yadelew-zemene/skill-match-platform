@@ -1,5 +1,6 @@
-"use client"; 
-import { createContext, useContext, useState, ReactNode ,useEffect} from "react";
+"use client";
+
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 interface AuthContextType {
   user: any;
@@ -11,11 +12,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  
   const [user, setUser] = useState<any>(null);
   const [token, setToken] = useState<string | null>(null);
-  
-    useEffect(() => {
+
+  useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
@@ -43,6 +43,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
+
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+
   return context;
 };

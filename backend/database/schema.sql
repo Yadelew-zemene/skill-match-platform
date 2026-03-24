@@ -3,7 +3,7 @@ use skillmatch;
 --users table
 CREATE TABLE  users(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL;
+    name VARCHAR(100) NOT NULL,
     email  VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(225) NOT NULL,
 
@@ -15,7 +15,7 @@ CREATE TABLE resumes(
     user_id INT NOT NULL,
     file_path VARCHAR(225) NOT NULL,
     extracted_text LONGTEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN  KEY (user_id) REFERENCES users(id)  ON DELETE CASCADE
 
 
@@ -28,6 +28,7 @@ CREATE TABLE  jobs(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     application_link VARCHAR(100) NOT NULL,
     company VARCHAR(20),
+    status ENUM('active','closed') DEFAULT 'active',
     FOREIGN KEY (employer_id) REFERENCES users(id) ON DELETE CASCADE
 
 

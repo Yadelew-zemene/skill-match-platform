@@ -1,6 +1,7 @@
 import api from "./api";
 
 export interface JobPayload {
+  id: number;
   title: string;
   company: string;
   description: string;
@@ -18,7 +19,7 @@ export const fetchEmployerJobs = async (employerId: number) => {
   const res = await api.get(`/jobs/employer/${employerId}`);
   return res.data;
 };
-export const fetchCandidateMatches = async (employerId: number) => {
-  const res = await api.get(`/employer/candidates/${employerId}`);
+export const fetchCandidateMatches = async (id: number) => {
+  const res = await api.get(`/employer/candidates/${id}`);
   return res.data;
 }

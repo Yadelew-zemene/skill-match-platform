@@ -16,7 +16,7 @@ export const saveResumeSkills = async (resumeId, skills) => {
       [values]
     );
 
-    // console.log("Resume skills insert result:", result);
+    console.log("Resume skills insert result:", result);
   } catch (err) {
     console.error("Failed to save resume skills:", err);
     throw err;

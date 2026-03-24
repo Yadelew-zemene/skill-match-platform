@@ -15,16 +15,11 @@ export const parseSkills = (resumePath) => {
       resumePath]);
 
     let output = "";
-    let errorOutput = "";
-    py.stdout.on("data", (data) => {
+     py.stdout.on("data", (data) => {
       output += data.toString();
     });
 
-  
-
-   
-
-  py.stderr.on("data", (err) => {
+   py.stderr.on("data", (err) => {
       console.error("Python error:", err.toString());
     });
          py.on("close", (code) => {
