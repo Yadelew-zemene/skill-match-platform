@@ -1,4 +1,5 @@
-import db from "../config/db.js";
+ import db from "../config/db.js";
+
 
 export const saveJobSkills = async (jobId, skills) => {
   const values = skills.map(skill => [jobId, skill]);
