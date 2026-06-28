@@ -23,6 +23,6 @@ app.use("/auth", authRoutes);
 app.use("/resumes", resumeRoutes);
 app.use("/", jobRoutes);
 app.use("/api/match", matchRoutes);
-app.use("/", candidateDashboardRoutes);
+app.use("/candidate", candidateDashboardRoutes);
 
 export default app;

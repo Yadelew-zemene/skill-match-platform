@@ -1,21 +1,14 @@
-export type UserRole = "candidate" | "employer" | "admin"
+
+export type UserRole = "candidate" | "employer";
 
 export interface User {
-  id: string
-  name: string
-  email: string
-  role: UserRole
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
 }
 
-export interface AuthContextType {
-  user: User | null
-  loading: boolean
-  login: (email: string, password: string) => Promise<void>
-  register: (
-    name: string,
-    email: string,
-    password: string,
-    role: UserRole
-  ) => Promise<void>
-  logout: () => Promise<void>
+export interface AuthResponse {
+  token: string;
+  user: User;
 }

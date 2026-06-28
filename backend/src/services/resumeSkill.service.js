@@ -4,7 +4,7 @@ export const saveResumeSkills = async (resumeId, skills) => {
   
 
   if (!Array.isArray(skills) || skills.length === 0) {
-    console.log("No resume skills to save");
+  
     return;
   }
 
@@ -16,7 +16,6 @@ export const saveResumeSkills = async (resumeId, skills) => {
       [values]
     );
 
-    console.log("Resume skills insert result:", result);
   } catch (err) {
     console.error("Failed to save resume skills:", err);
     throw err;

@@ -1,11 +1,12 @@
-
-interface MatchedJob {
+export interface MatchedJob {
   jobId: number;
-    title: string;
-    campany: string,
-    description: string,
-    applicationLink: string
-    score: number;
-    matched_skills: string[];
-    
+  title: string;
+  company: string | null;
+  description: string;
+  applicationLink: string;
+  score: number;
+}
+
+export interface CandidateDashboardResponse {
+  matchedJobs: MatchedJob[];
 }

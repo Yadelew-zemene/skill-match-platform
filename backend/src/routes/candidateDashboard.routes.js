@@ -5,7 +5,7 @@ import roleMiddleware from "../middlewares/role.middleware.js";
 
 const router=express.Router()
 router.get(
-  "/candidate/dashboard",
+  "/dashboard",
   authMiddleware,
   roleMiddleware("candidate"),
   getCandidateDashboard

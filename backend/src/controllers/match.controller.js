@@ -2,22 +2,22 @@
 import { matchResumeToAllJobs } from "../services/match.service.js";
 export const calculateMatch = async (req, res) => {
   try {
-        const { resumeId, jobId } = req.body;
+    const { resumeId } = req.body;
 
-        if (!resumeId || !jobId) {
-          return res.status(400).json({
-            message: "resumeId and jobId are required",
-          });
-        }
+    if (!resumeId) {
+      return res.status(400).json({
+        message: "resumeId is required",
+      });
+    }
 
-        await matchResumeToAllJobs(resumeId);
+    await matchResumeToAllJobs(resumeId);
 
-        res.status(200).json({
-          message: "Match calculated successfully",
-          ...result,
-        });
+    return res.status(200).json({
+      message: "Match calculated successfully",
+    });
+
   } catch (error) {
-        console.error("Match error:", error);
-        res.status(500).json({ message: "Server error" });
+    console.error("Match error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };

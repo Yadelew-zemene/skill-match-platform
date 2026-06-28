@@ -1,90 +1,93 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { registerUser } from "@/services/auth.service"
-import { Input } from "@/components/ui/Input"
-import { Button } from "@/components/ui/Button"
-import { Form } from "@/components/ui/Form"
-import toast from "react-hot-toast"
-import { UserRole } from "@/types/auth"
+import { useState } from "react";
+import { registerUser } from "@/services/auth.service";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { getDashboardRoute } from "@/utils/redirect";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { login } = useAuth();
 
-  const router = useRouter()
-  
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [role, setRole] = useState<UserRole>("candidate")
-  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("candidate");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
 
     try {
-      await registerUser(name, email, password, role)
+      const res = await registerUser(name, email, password, role);
 
-      toast.success("Account created successfully")
-
-     router.push("/login")
-    } catch (error) {
-      toast.error("Registration failed")
-    } finally {
-      setLoading(false)
+      if (res.token && res.user) {
+        login(res.token, res.user);
+        router.push(getDashboardRoute(res.user.role));
+      } else {
+        toast.success("Account created");
+        router.push("/login");
+      }
+    } catch {
+      toast.error("Registration failed");
     }
-  }
+  };
 
   return (
-   <div className="flex items-center justify-center min-h-screen px-4 bg-gray-50">
-  <Form>
-    <h2 className="text-2xl font-bold mb-6 text-center">
-      Create Account
-    </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
 
-    <form onSubmit={handleSubmit} className="space-y-4">
+        <h1 className="text-2xl font-bold text-center text-blue-600 mb-6">
+          Create Account
+        </h1>
 
-      <Input
-        label="Full Name"
-        required
-        onChange={(e) => setName(e.target.value)}
-      />
+        <form onSubmit={handleSubmit} className="space-y-4">
 
-      <Input
-        label="Email"
-        type="email"
-        required
-        onChange={(e) => setEmail(e.target.value)}
-      />
+          <input
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Full name"
+            onChange={(e) => setName(e.target.value)}
+          />
 
-      <Input
-        label="Password"
-        type="password"
-        required
-        onChange={(e) => setPassword(e.target.value)}
-      />
+          <input
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Email"
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-      {/* Role Selection */}
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
-          Account Type
-        </label>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value as UserRole)}
-          className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-        >
-          <option value="candidate">Candidate</option>
-          <option value="employer">Employer</option>
-        </select>
+          <input
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Password"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <select
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="candidate">Candidate</option>
+            <option value="employer">Employer</option>
+          </select>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            Register
+          </button>
+
+          <p className="text-sm text-center text-gray-500">
+            Already have an account?
+            <a href="/login" className="text-blue-600 ml-1">
+              Login
+            </a>
+          </p>
+
+        </form>
       </div>
-
-      <Button disabled={loading}>
-        {loading ? "Creating..." : "Register"}
-      </Button>
-    </form>
-  </Form>
-</div>
-  )
+    </div>
+  );
 }
