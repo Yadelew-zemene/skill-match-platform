@@ -59,14 +59,6 @@ skillmatch/
 │
 └── README.md
 
-## Database Schema/tables
-- `users` (id, name, email, password, role)
-- `resumes` (user_id, file_path, extracted_text)
-- `jobs` (employer_id, title, description)
-- `resume_skills` (resume_id, skill)
-- `job_skills` (job_id, skill)
-- `match_scores` (resume_id, job_id, score)
-
 ## System Flow
 Candidate → Upload Resume → AI Parsing → Stored Skills → Match Engine → Ranked Candidates
 Visualizing system flow:
