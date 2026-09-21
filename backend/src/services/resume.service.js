@@ -1,6 +1,7 @@
 import Resume from "../models/resume.model.js";
 import { parseResume } from "./resumeParser.service.js";
 import { saveResumeSkills } from "./resumeSkill.service.js";
+import { matchResumeToAllJobs } from "./match.service.js";
 
 export const createResume = async ({
   userId,
@@ -35,6 +36,8 @@ export const createResume = async ({
 
     // 5. Make this the active resume
     await Resume.setActive(resumeId, userId);
+
+    await matchResumeToAllJobs(resumeId);
 
     return {
       resumeId,

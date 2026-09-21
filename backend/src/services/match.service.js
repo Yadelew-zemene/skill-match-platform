@@ -1,81 +1,148 @@
 import db from "../config/db.js";
+import Score from "../models/score.model.js";
+
+const normalizeSkills = (skills) => {
+  if (!Array.isArray(skills)) {
+    return [];
+  }
+
+  return [
+    ...new Set(
+      skills
+        .filter((skill) => typeof skill === "string")
+        .map((skill) => skill.trim().toLowerCase())
+        .filter(Boolean),
+    ),
+  ];
+};
 
 const calculateScore = (resumeSkills, jobSkills) => {
-  const resumeSet = new Set(resumeSkills.map(s => s.toLowerCase().trim()));
-  const jobSet = new Set(jobSkills.map(s => s.toLowerCase().trim()));
+  const resumeSet = new Set(normalizeSkills(resumeSkills));
+  const jobSet = new Set(normalizeSkills(jobSkills));
 
-  const matched = [...jobSet].filter(skill => resumeSet.has(skill));
+  if (jobSet.size === 0) {
+    return 0;
+  }
 
-  return jobSet.size > 0
-    ? Math.round((matched.length / jobSet.size) * 100)
-    : 0;
+  const matchedSkills = [...jobSet].filter((skill) => resumeSet.has(skill));
+
+  return Math.round((matchedSkills.length / jobSet.size) * 100);
 };
+
+
+
+const getResumeSkills = async (resumeId) => {
+  const [rows] = await db.execute(
+    `
+      SELECT skill
+      FROM resume_skills
+      WHERE resume_id = ?
+    `,
+    [resumeId],
+  );
+
+  return rows.map((row) => row.skill);
+};
+
+const getJobSkills = async (jobId) => {
+  const [rows] = await db.execute(
+    `
+      SELECT skill
+      FROM job_skills
+      WHERE job_id = ?
+    `,
+    [jobId],
+  );
+
+  return rows.map((row) => row.skill);
+};
+
+/**
+ * Match one completed resume against all active jobs.
+ */
 export const matchResumeToAllJobs = async (resumeId) => {
-  const [resumeSkillsRows] = await db.query(
-    "SELECT skill FROM resume_skills WHERE resume_id = ?",
-    [resumeId]
+  const [resumeRows] = await db.execute(
+    `
+      SELECT id
+      FROM resumes
+      WHERE id = ?
+        AND status = 'completed'
+      LIMIT 1
+    `,
+    [resumeId],
   );
 
-  const resumeSkills = resumeSkillsRows.map(r => r.skill);
+  if (!resumeRows.length) {
+    throw new Error("Resume is not completed");
+  }
 
-  if (!resumeSkills.length) return;
+  const resumeSkills = await getResumeSkills(resumeId);
 
-  const [jobs] = await db.query("SELECT id FROM jobs");
-
-  await Promise.all(
-    jobs.map(async (job) => {
-      const [jobSkillsRows] = await db.query(
-        "SELECT skill FROM job_skills WHERE job_id = ?",
-        [job.id]
-      );
-
-      const jobSkills = jobSkillsRows.map(j => j.skill);
-
-      const score = calculateScore(resumeSkills, jobSkills);
-
-      await db.query(
-        `
-        INSERT INTO match_scores (resume_id, job_id, score)
-        VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE score = VALUES(score)
-        `,
-        [resumeId, job.id, score]
-      );
-    })
+  const [jobs] = await db.execute(
+    `
+      SELECT id
+      FROM jobs
+      WHERE status = 'active'
+    `,
   );
+
+  for (const job of jobs) {
+    const jobSkills = await getJobSkills(job.id);
+
+    const score = calculateScore(resumeSkills, jobSkills);
+   await Score.upsert({
+  resumeId,
+  jobId: job.id,
+  score,
+});
+  }
+
+  return {
+    resumeId,
+    jobsMatched: jobs.length,
+  };
 };
+
+/**
+ * Match one active job against all eligible candidate resumes.
+ */
 export const matchJobToAllResumes = async (jobId) => {
-  // Get job skills
-  const [jobSkillsRows] = await db.query(
-    "SELECT skill FROM job_skills WHERE job_id = ?",
-    [jobId]
+  const [jobRows] = await db.execute(
+    `
+      SELECT id
+      FROM jobs
+      WHERE id = ?
+        AND status = 'active'
+      LIMIT 1
+    `,
+    [jobId],
   );
 
-  const jobSkills = jobSkillsRows.map(j => j.skill);
+  if (!jobRows.length) {
+    throw new Error("Active job not found");
+  }
 
-  // Get ALL resumes
-  const [resumes] = await db.query("SELECT id FROM resumes");
+  const jobSkills = await getJobSkills(jobId);
 
- await Promise.all(
-  jobs.map(async (job) => {
-    const [jobSkillsRows] = await db.query(
-      "SELECT skill FROM job_skills WHERE job_id = ?",
-      [job.id]
-    );
+  const [resumes] = await db.execute(
+    `
+      SELECT id
+      FROM resumes
+      WHERE status = 'completed'
+        AND is_active = TRUE
+    `,
+  );
 
-    const jobSkills = jobSkillsRows.map(j => j.skill);
+  for (const resume of resumes) {
+    const resumeSkills = await getResumeSkills(resume.id);
 
     const score = calculateScore(resumeSkills, jobSkills);
 
-    await db.query(
-      `
-      INSERT INTO match_scores (resume_id, job_id, score)
-      VALUES (?, ?, ?)
-      ON DUPLICATE KEY UPDATE score = VALUES(score)
-      `,
-      [resumeId, job.id, score]
-    );
-  })
-);
-};
+    await upsertMatchScore(resume.id, jobId, score);
+  }
 
+  return {
+    jobId,
+    resumesMatched: resumes.length,
+  };
+};
