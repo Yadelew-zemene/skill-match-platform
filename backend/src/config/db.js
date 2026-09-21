@@ -1,4 +1,5 @@
-import mysql from 'mysql2/promise';
+import "dotenv/config";
+import mysql from "mysql2/promise";
 
 const requiredConfig = ["DB_HOST", "DB_USER", "DB_PASSWORD", "DB_NAME"];
 const missingConfig = requiredConfig.filter((key) => !process.env[key]);
@@ -18,6 +19,5 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
-
 
 export default pool;
