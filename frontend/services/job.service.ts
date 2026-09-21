@@ -1,7 +1,7 @@
 import api from "./api";
 
 export interface JobPayload {
-  id: number;
+  // id: number;
   title: string;
   company: string;
   description: string;

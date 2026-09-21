@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { loginUser } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
@@ -35,46 +36,121 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--background)] px-6 py-12">
+      <div className="w-full max-w-md">
+        {/* BRAND */}
+        <div className="mb-8 text-center">
+          <Link href="/" className="inline-flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--brand)] text-sm font-black text-[#080A0D]">
+              S
+            </div>
 
-        <h1 className="text-2xl font-bold text-center text-green-600 mb-6">
-          Welcome Back
-        </h1>
+            <span className="text-xl font-bold tracking-tight text-[var(--foreground)]">
+              Skill<span className="text-[var(--brand)]">Match</span>
+            </span>
+          </Link>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-
-          <input
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <input
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          <button
-            disabled={loading}
-            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-
-          <p className="text-sm text-center text-gray-500">
-            Don’t have an account?
-            <a href="/register" className="text-green-600 ml-1">
-              Register
-            </a>
+          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+            Welcome back. Continue where you left off.
           </p>
+        </div>
 
-        </form>
+        {/* CARD */}
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-7 shadow-2xl shadow-black/20 sm:p-8">
+          <div className="mb-7">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">
+              Welcome back
+            </h1>
+
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+              Sign in to access your SkillMatch account.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* EMAIL */}
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-sm font-medium text-[var(--foreground)]"
+              >
+                Email address
+              </label>
+
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--surface-elevated)] px-3.5 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand)]/10"
+              />
+            </div>
+
+            {/* PASSWORD */}
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-[var(--foreground)]"
+                >
+                  Password
+                </label>
+
+                <button
+                  type="button"
+                  className="text-xs font-medium text-[var(--muted-foreground)] transition hover:text-[var(--brand)]"
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+                className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--surface-elevated)] px-3.5 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand)]/10"
+              />
+            </div>
+
+            {/* SUBMIT */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg bg-[var(--brand)] px-4 py-3.5 text-sm font-semibold text-[#080A0D] transition hover:bg-[var(--brand-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+
+            {/* REGISTER */}
+            <p className="pt-1 text-center text-sm text-[var(--muted-foreground)]">
+              Don't have an account?{" "}
+              <Link
+                href="/register"
+                className="font-semibold text-[var(--brand)] transition hover:text-[var(--brand-hover)]"
+              >
+                Create one
+              </Link>
+            </p>
+          </form>
+        </div>
+
+        {/* BACK */}
+        <div className="mt-6 text-center">
+          <Link
+            href="/"
+            className="text-xs text-[var(--muted-foreground)] transition hover:text-[var(--foreground)]"
+          >
+            ← Back to SkillMatch
+          </Link>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

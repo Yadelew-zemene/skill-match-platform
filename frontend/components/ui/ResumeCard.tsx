@@ -8,7 +8,7 @@ interface ResumeCardProps {
   };
 }
 
-export default function ResumeCard({ resume }: ResumeCardProps) {
+export default function ResumeCardResumeCard({ resume }: ResumeCardProps) {
   return (
     <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
       <h2 className="font-semibold text-lg text-gray-800 mb-2">
@@ -17,7 +17,9 @@ export default function ResumeCard({ resume }: ResumeCardProps) {
 
       <div className="mb-4">
         <h3 className="font-medium text-gray-700 mb-1">Extracted Skills:</h3>
-        <p className="text-gray-600 text-sm">{resume.extracted_text || "N/A"}</p>
+        <p className="text-gray-600 text-sm">
+          {resume.extracted_text || "N/A"}
+        </p>
       </div>
 
       {resume.match_scores.length > 0 && (
