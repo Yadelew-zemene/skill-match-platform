@@ -3,7 +3,6 @@ import cors from "cors"
 import authRoutes from './routes/auth.routes.js'
 import resumeRoutes from "./routes/resume.routes.js"
 import jobRoutes from "./routes/job.routes.js";
-import matchRoutes from "./routes/match.routes.js";
 import candidateDashboardRoutes from "./routes/candidateDashboard.routes.js"
 
 
@@ -18,11 +17,9 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/uploads", express.static("uploads"));
 app.use("/auth", authRoutes);
 app.use("/resumes", resumeRoutes);
 app.use("/", jobRoutes);
-app.use("/api/match", matchRoutes);
 app.use("/candidate", candidateDashboardRoutes);
 
 export default app;

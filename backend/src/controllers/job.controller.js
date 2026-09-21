@@ -4,10 +4,15 @@ import { matchJobToAllResumes } from "../services/match.service.js";
 import { parseJobSkills } from "../services/jobParser.service.js";
 import { saveJobSkills } from "../services/jobSkill.service.js";
 
-export const createJob = async (req, res) => {
+export const createJobController = ({
+  jobModel = Job,
+  parseSkills = parseJobSkills,
+  saveSkills = saveJobSkills,
+  matchJob = matchJobToAllResumes,
+} = {}) => async (req, res) => {
   try {
     
-        const jobId = await Job.create({
+        const jobId = await jobModel.create({
           employerId: req.user.id,
           title: req.body.title,
           description: req.body.description,
@@ -15,17 +20,18 @@ export const createJob = async (req, res) => {
           company:req.body.company
         });
 
-        const skills = await parseJobSkills(req.body.description);
-        await saveJobSkills(jobId, skills);
-        await matchJobToAllResumes(jobId);
+        const skills = await parseSkills(req.body.description);
+        await saveSkills(jobId, skills);
+        await matchJob(jobId);
 
         res.status(201).json({ jobId, skills });
   } catch (err) {
         console.error("JOB CREATE ERROR", err);
         res.status(500).json({
-        message: "Job creation failed",
-        error: err.message || err
+        message: "Job creation failed"
         });
 }
 
 };
+
+export const createJob = createJobController();

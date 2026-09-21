@@ -1,8 +1,15 @@
 # Node modules
 node_modules/
+uploads/
+python/venv/
+.next/
+dist/
+out/
 
 # Environment variables
 .env
+.env.*
+!.env.example
 
 # Logs
 npm-debug.log*
