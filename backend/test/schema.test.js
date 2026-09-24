@@ -53,14 +53,17 @@ test("migration adds missing schema elements and protects duplicate data", async
     assert.match(migration, new RegExp(`column_name = '${column}'`));
   }
 
-  assert.match(migration, /update resumes set original_filename/);
-  assert.match(
-    migration,
-    /cannot add match_scores unique key while duplicate resume\/job pairs exist/,
-  );
-  assert.match(
-    migration,
-    /add constraint uq_match_scores_resume_job unique \(resume_id, job_id\)/,
-  );
-  assert.doesNotMatch(migration, /delete from resumes|drop table|drop column/);
+ assert.match(migration, /update resumes set original_filename/);
+
+ assert.match(
+   migration,
+   /cannot add unique match_scores key: duplicate resume\/job pairs exist/,
+ );
+
+ assert.match(
+   migration,
+   /add constraint uq_match_scores_resume_job unique \(resume_id, job_id\)/,
+ );
+
+ assert.doesNotMatch(migration, /delete from resumes|drop table|drop column/);
 });

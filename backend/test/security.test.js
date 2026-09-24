@@ -63,8 +63,10 @@ test("login response omits the password field", async () => {
 });
 
 test("employer job creation derives ownership from the authenticated user", async () => {
-  const { createJobController } = await import("../src/controllers/job.controller.js");
+  const { createJobController } =
+    await import("../src/controllers/job.controller.js");
   let createdJob;
+
   const createJob = createJobController({
     jobModel: {
       create: async (job) => {
@@ -72,10 +74,13 @@ test("employer job creation derives ownership from the authenticated user", asyn
         return 42;
       },
     },
-    parseSkills: async () => ["javascript"],
+    parseSkills: async () => ({
+      skills: ["javascript"],
+    }),
     saveSkills: async () => undefined,
     matchJob: async () => undefined,
   });
+
   const response = createResponse();
 
   await createJob(
@@ -94,7 +99,10 @@ test("employer job creation derives ownership from the authenticated user", asyn
 
   assert.equal(createdJob.employerId, 99);
   assert.equal(response.statusCode, 201);
-  assert.deepEqual(response.body, { jobId: 42, skills: ["javascript"] });
+  assert.deepEqual(response.body, {
+    jobId: 42,
+    skills: ["javascript"],
+  });
 });
 
 test("candidate cannot create a job and public security-sensitive endpoints are unavailable", async (t) => {
