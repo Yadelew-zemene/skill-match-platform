@@ -20,11 +20,17 @@ export const createJobController = ({
           company:req.body.company
         });
 
-        const skills = await parseSkills(req.body.description);
-        await saveSkills(jobId, skills);
-        await matchJob(jobId);
+          const parsed = await parseSkills(req.body.description);
 
-        res.status(201).json({ jobId, skills });
+          await saveSkills(jobId, parsed.skills);
+          await matchJob(jobId);
+
+          res.status(201).json({
+            jobId,
+            skills: parsed.skills,
+          });
+          
+
   } catch (err) {
         console.error("JOB CREATE ERROR", err);
         res.status(500).json({
