@@ -29,8 +29,6 @@ const calculateScore = (resumeSkills, jobSkills) => {
   return Math.round((matchedSkills.length / jobSet.size) * 100);
 };
 
-
-
 const getResumeSkills = async (resumeId) => {
   const [rows] = await db.execute(
     `
@@ -90,11 +88,11 @@ export const matchResumeToAllJobs = async (resumeId) => {
     const jobSkills = await getJobSkills(job.id);
 
     const score = calculateScore(resumeSkills, jobSkills);
-   await Score.upsert({
-  resumeId,
-  jobId: job.id,
-  score,
-});
+    await Score.upsert({
+      resumeId,
+      jobId: job.id,
+      score,
+    });
   }
 
   return {
@@ -107,42 +105,59 @@ export const matchResumeToAllJobs = async (resumeId) => {
  * Match one active job against all eligible candidate resumes.
  */
 export const matchJobToAllResumes = async (jobId) => {
-  const [jobRows] = await db.execute(
+  const [jobRows] = await db.query(
     `
-      SELECT id
-      FROM jobs
-      WHERE id = ?
-        AND status = 'active'
-      LIMIT 1
+    SELECT id
+    FROM jobs
+    WHERE id = ?
+      AND status = 'active'
+    LIMIT 1
     `,
     [jobId],
   );
 
   if (!jobRows.length) {
-    throw new Error("Active job not found");
+    return;
   }
 
-  const jobSkills = await getJobSkills(jobId);
-
-  const [resumes] = await db.execute(
+  const [jobSkillsRows] = await db.query(
     `
-      SELECT id
-      FROM resumes
-      WHERE status = 'completed'
-        AND is_active = TRUE
+    SELECT skill
+    FROM job_skills
+    WHERE job_id = ?
+    `,
+    [jobId],
+  );
+
+  const jobSkills = jobSkillsRows.map((row) => row.skill);
+
+  const [resumes] = await db.query(
+    `
+    SELECT id
+    FROM resumes
+    WHERE status = 'completed'
+      AND is_active = TRUE
     `,
   );
 
   for (const resume of resumes) {
-    const resumeSkills = await getResumeSkills(resume.id);
+    const [resumeSkillsRows] = await db.query(
+      `
+      SELECT skill
+      FROM resume_skills
+      WHERE resume_id = ?
+      `,
+      [resume.id],
+    );
+
+    const resumeSkills = resumeSkillsRows.map((row) => row.skill);
 
     const score = calculateScore(resumeSkills, jobSkills);
 
-    await upsertMatchScore(resume.id, jobId, score);
+    await Score.upsert({
+      resumeId: resume.id,
+      jobId,
+      score,
+    });
   }
-
-  return {
-    jobId,
-    resumesMatched: resumes.length,
-  };
 };
