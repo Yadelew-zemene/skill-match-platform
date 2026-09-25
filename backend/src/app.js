@@ -5,6 +5,7 @@ import resumeRoutes from "./routes/resume.routes.js"
 import jobRoutes from "./routes/job.routes.js";
 import candidateDashboardRoutes from "./routes/candidateDashboard.routes.js"
 
+import applicationRoutes from "./routes/application.routes.js";
 
 
 const app = express();
@@ -21,5 +22,6 @@ app.use("/auth", authRoutes);
 app.use("/resumes", resumeRoutes);
 app.use("/", jobRoutes);
 app.use("/candidate", candidateDashboardRoutes);
+app.use("/api/applications", applicationRoutes)
 
 export default app;
