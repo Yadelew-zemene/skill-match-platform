@@ -1,5 +1,5 @@
 import express from "express";
-import { createJob } from "../controllers/job.controller.js";
+import { createJob, getCandidateJobs } from "../controllers/job.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import roleMiddleware from "../middlewares/role.middleware.js";
 import { getEmployerJobs } from "../controllers/posted-jobs.controller.js";
@@ -19,5 +19,12 @@ router.get(
     "/employer/candidates:jobId",
     viewCandidates
 )
+
+router.get(
+  "/jobs",
+  authMiddleware,
+  roleMiddleware("candidate"),
+  getCandidateJobs,
+);
 
 export default router;
