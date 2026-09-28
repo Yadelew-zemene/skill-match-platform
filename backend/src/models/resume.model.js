@@ -134,6 +134,21 @@ class Resume {
 
     return result;
   }
+ 
+  static async findSkillsByResumeId(resumeId) {
+    const [rows] = await db.execute(
+      `
+    SELECT skill
+    FROM resume_skills
+    WHERE resume_id = ?
+    ORDER BY skill
+    `,
+      [resumeId],
+    );
+
+    return rows.map((row) => row.skill);
+  }
 }
 
 export default Resume;
+

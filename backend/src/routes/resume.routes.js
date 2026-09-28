@@ -1,24 +1,32 @@
 import express from "express";
-import { uploadResume,getResumeMatches} from "../controllers/resume.controller.js";
+
+import {
+  uploadResume,
+  getResumes,
+  getResume,
+  activateResume,
+  deleteResume,
+  getResumeMatches,
+} from "../controllers/resume.controller.js";
+
 import upload from "../middlewares/upload.middleware.js";
-import authMiddleware from '../middlewares/auth.middleware.js'
+import authMiddleware from "../middlewares/auth.middleware.js";
 import roleMiddleware from "../middlewares/role.middleware.js";
 
-const router=express.Router()
+const router = express.Router();
 
-// 
-router.post("/upload",
-  authMiddleware,
-  roleMiddleware("candidate"),
-  upload.single("resume"),
-  uploadResume
-);
+router.use(authMiddleware, roleMiddleware("candidate"));
 
-router.get(
-  "/:id/matches",
-  authMiddleware,
-  roleMiddleware("candidate"),
-  getResumeMatches
-);
+router.post("/upload", upload.single("resume"), uploadResume);
+
+router.get("/", getResumes);
+
+router.get("/:id", getResume);
+
+router.get("/:id/matches", getResumeMatches);
+
+router.patch("/:id/activate", activateResume);
+
+router.delete("/:id", deleteResume);
 
 export default router;

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import {  useState } from "react";
 import {
     uploadResume,
-    UploadResumeResponse,
 } from "@/services/resume.service";
+import { UploadResumeResponse } from  "@/types/resume"
 
 export const useUploadResume = () => {
     const [uploading, setUploading] = useState(false);

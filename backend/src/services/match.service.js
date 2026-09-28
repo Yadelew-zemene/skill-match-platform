@@ -16,7 +16,7 @@ const normalizeSkills = (skills) => {
   ];
 };
 
-const calculateScore = (resumeSkills, jobSkills) => {
+export const calculateScore = (resumeSkills, jobSkills) => {
   const resumeSet = new Set(normalizeSkills(resumeSkills));
   const jobSet = new Set(normalizeSkills(jobSkills));
 

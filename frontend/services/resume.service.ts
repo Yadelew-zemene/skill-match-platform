@@ -1,25 +1,9 @@
 import api from "./api";
-
-export interface UploadResumeResponse {
-  message: string;
-  resumeId: number;
-  skills: string[];
-  status: "completed" | "processing" | "failed";
-}
-
-export interface Resume {
-  id: number;
-  user_id: number;
-  file_path: string;
-  original_filename: string | null;
-  mime_type: string | null;
-  file_size: number | null;
-  extracted_text: string | null;
-  status: "processing" | "completed" | "failed";
-  is_active: boolean;
-  processing_error: string | null;
-  created_at: string;
-}
+import {
+  Resume,
+  ResumeMatch,
+  UploadResumeResponse,
+} from "@/types/resume";
 
 export const uploadResume = async (
   file: File
@@ -28,16 +12,52 @@ export const uploadResume = async (
 
   formData.append("resume", file);
 
-  const res = await api.post<UploadResumeResponse>(
+  const response = await api.post<UploadResumeResponse>(
     "/resumes/upload",
     formData
   );
 
-  return res.data;
+  return response.data;
 };
 
 export const getMyResumes = async (): Promise<Resume[]> => {
-  const res = await api.get<Resume[]>("/resumes");
+  const response = await api.get<Resume[]>("/resumes");
 
-  return res.data;
+  return response.data;
+};
+
+export const getResume = async (
+  resumeId: number
+): Promise<Resume> => {
+  const response = await api.get<Resume>(
+    `/resumes/${resumeId}`
+  );
+
+  return response.data;
+};
+
+export const getResumeMatches = async (
+  resumeId: number
+): Promise<ResumeMatch[]> => {
+  const response = await api.get<ResumeMatch[]>(
+    `/resumes/${resumeId}/matches`
+  );
+
+  return response.data;
+};
+export const activateResume = async (
+  resumeId: number
+): Promise<Resume> => {
+  const response = await api.patch<{
+    message: string;
+    resume: Resume;
+  }>(`/resumes/${resumeId}/activate`);
+
+  return response.data.resume;
+};
+
+export const deleteResume = async (
+  resumeId: number
+): Promise<void> => {
+  await api.delete(`/resumes/${resumeId}`);
 };

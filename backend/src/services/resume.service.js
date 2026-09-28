@@ -57,7 +57,13 @@ export const createResume = async ({
 };
 
 export const getCandidateResumes = async (userId) => {
-  return Resume.findAllByUserId(userId);
+  const resumes = await Resume.findAllByUserId(userId);
+
+  for (const resume of resumes) {
+    resume.skills = await Resume.findSkillsByResumeId(resume.id);
+  }
+
+  return resumes;
 };
 
 export const getCandidateResume = async (resumeId, userId) => {
