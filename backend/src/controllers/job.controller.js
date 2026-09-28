@@ -74,5 +74,31 @@ export const getCandidateJobs = async (req, res) => {
     });
   }
 };
+export const getCandidateJob = async (req, res) => {
+  try {
+    const jobId = Number(req.params.id);
 
+    if (!Number.isInteger(jobId) || jobId <= 0) {
+      return res.status(400).json({
+        message: "Invalid job ID",
+      });
+    }
+
+    const job = await Job.findActiveByIdForCandidate(jobId, req.user.id);
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found",
+      });
+    }
+
+    res.status(200).json({ job });
+  } catch (error) {
+    console.error("GET CANDIDATE JOB ERROR", error);
+
+    res.status(500).json({
+      message: "Failed to fetch job",
+    });
+  }
+};
 export const createJob = createJobController();

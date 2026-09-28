@@ -1,5 +1,10 @@
 import express from "express";
-import { createJob, getCandidateJobs } from "../controllers/job.controller.js";
+import {
+    createJob,
+    getCandidateJobs,
+    getCandidateJob,
+} from "../controllers/job.controller.js";
+
 import authMiddleware from "../middlewares/auth.middleware.js";
 import roleMiddleware from "../middlewares/role.middleware.js";
 import { getEmployerJobs } from "../controllers/posted-jobs.controller.js";
@@ -26,5 +31,10 @@ router.get(
   roleMiddleware("candidate"),
   getCandidateJobs,
 );
-
+router.get(
+  "/jobs/:id",
+  authMiddleware,
+  roleMiddleware("candidate"),
+  getCandidateJob,
+);
 export default router;

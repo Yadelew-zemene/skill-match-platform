@@ -1,6 +1,6 @@
 import api from "./api";
 import { CandidateJobsResponse } from "@/types/jobs";
-
+import { CandidateJob } from "@/types/jobs";
 export interface JobPayload {
   title: string;
   company: string;
@@ -35,4 +35,15 @@ export const fetchCandidateJobs = async (
   });
 
   return res.data;
+};
+
+
+export const fetchCandidateJob = async (
+  jobId: number
+): Promise<CandidateJob> => {
+  const res = await api.get<{ job: CandidateJob }>(
+    `/jobs/${jobId}`
+  );
+
+  return res.data.job;
 };

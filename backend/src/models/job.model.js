@@ -75,6 +75,41 @@ class Job {
 
     return rows[0].total;
   }
+  static async findActiveByIdForCandidate(jobId, candidateId) {
+    const [rows] = await db.query(
+      `
+    SELECT
+      j.id,
+      j.title,
+      j.description,
+      j.company,
+      j.application_link,
+      j.created_at,
+      COALESCE(MAX(ms.score), 0) AS match_score
+    FROM jobs j
+    LEFT JOIN resumes r
+      ON r.user_id = ?
+      AND r.status = 'completed'
+      AND r.is_active = TRUE
+    LEFT JOIN match_scores ms
+      ON ms.job_id = j.id
+      AND ms.resume_id = r.id
+    WHERE j.id = ?
+      AND j.status = 'active'
+    GROUP BY
+      j.id,
+      j.title,
+      j.description,
+      j.company,
+      j.application_link,
+      j.created_at
+    LIMIT 1
+    `,
+      [candidateId, jobId],
+    );
+
+    return rows[0] || null;
+  }
 }
 
 export default Job;
