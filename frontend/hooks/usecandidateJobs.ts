@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getCandidateDashboard } from "@/services/candidate.service";
 import { MatchedJob } from "@/types/candidateDashboard";
@@ -12,23 +12,31 @@ export const useCandidateJobs = () => {
   const [jobs, setJobs] = useState<MatchedJob[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchJobs = async () => {
-    if (!token) return;
+  const fetchJobs = useCallback(async () => {
+    if (!token) {
+      setJobs([]);
+      setLoading(false);
+      return;
+    }
 
     try {
       setLoading(true);
-      const data = await getCandidateDashboard(token);
-      setJobs(data.matchedJobs || []);
-    } catch (err) {
+
+      const data = await getCandidateDashboard();
+
+      setJobs(data.matchedJobs ?? []);
+    } catch (error) {
+      console.error("Failed to load candidate dashboard:", error);
       toast.error("Failed to load dashboard");
+      setJobs([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchJobs();
-  }, [token]);
+  }, [fetchJobs]);
 
   return {
     jobs,
