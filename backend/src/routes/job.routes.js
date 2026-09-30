@@ -1,14 +1,15 @@
 import express from "express";
+
 import {
-    createJob,
-    getCandidateJobs,
-    getCandidateJob,
+  createJob,
+  getCandidateJobs,
+  getCandidateJob,
 } from "../controllers/job.controller.js";
 
 import authMiddleware from "../middlewares/auth.middleware.js";
 import roleMiddleware from "../middlewares/role.middleware.js";
-import { getEmployerJobs } from "../controllers/posted-jobs.controller.js";
 
+import { getEmployerJobs } from "../controllers/posted-jobs.controller.js";
 import {
   getEmployerJobController,
   updateEmployerJobController,
@@ -20,35 +21,24 @@ import { viewCandidates } from "../controllers/getCandidate.controller.js";
 
 const router = express.Router();
 
+/*
+|--------------------------------------------------------------------------
+| Employer Job Management
+|--------------------------------------------------------------------------
+*/
+
 router.post(
-    "/employer/post-jobs",
-    authMiddleware,
-    roleMiddleware("employer"),
-    createJob);
+  "/employer/post-jobs",
+  authMiddleware,
+  roleMiddleware("employer"),
+  createJob,
+);
+
 router.get(
   "/employer/jobs",
   authMiddleware,
   roleMiddleware("employer"),
   getEmployerJobs,
-);
-router.get(
-  "/employer/candidates/:jobId",
-  authMiddleware,
-  roleMiddleware("employer"),
-  viewCandidates,
-);
-
-router.get(
-  "/jobs",
-  authMiddleware,
-  roleMiddleware("candidate"),
-  getCandidateJobs,
-);
-router.get(
-  "/jobs/:id",
-  authMiddleware,
-  roleMiddleware("candidate"),
-  getCandidateJob,
 );
 
 router.get(
@@ -78,4 +68,38 @@ router.delete(
   roleMiddleware("employer"),
   deleteEmployerJobController,
 );
+
+/*
+|--------------------------------------------------------------------------
+| Employer Candidates
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/employer/candidates/:jobId",
+  authMiddleware,
+  roleMiddleware("employer"),
+  viewCandidates,
+);
+
+/*
+|--------------------------------------------------------------------------
+| Candidate Job Browsing
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/jobs",
+  authMiddleware,
+  roleMiddleware("candidate"),
+  getCandidateJobs,
+);
+
+router.get(
+  "/jobs/:id",
+  authMiddleware,
+  roleMiddleware("candidate"),
+  getCandidateJob,
+);
+
 export default router;
