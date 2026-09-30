@@ -1,15 +1,19 @@
-import getPostedJobs from "../services/posted-jobs.service.js"
+import getPostedJobs from "../services/posted-jobs.service.js";
 
 export const getEmployerJobs = async (req, res) => {
   try {
-    const employerId = req.params.employerId;
+    const employerId = req.user.id;
 
     const jobs = await getPostedJobs(employerId);
 
-      res.status(200).json(jobs);
-      console.log(jobs)
+    return res.status(200).json({
+      jobs,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch jobs" });
+    console.error("GET EMPLOYER JOBS ERROR", error);
+
+    return res.status(500).json({
+      message: "Failed to fetch jobs",
+    });
   }
 };

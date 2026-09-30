@@ -18,12 +18,17 @@ router.post(
     roleMiddleware("employer"),
     createJob);
 router.get(
-    "/jobs/employer/:employerId",
-    getEmployerJobs);
+  "/employer/jobs",
+  authMiddleware,
+  roleMiddleware("employer"),
+  getEmployerJobs,
+);
 router.get(
-    "/employer/candidates:jobId",
-    viewCandidates
-)
+  "/employer/candidates/:jobId",
+  authMiddleware,
+  roleMiddleware("employer"),
+  viewCandidates,
+);
 
 router.get(
   "/jobs",
