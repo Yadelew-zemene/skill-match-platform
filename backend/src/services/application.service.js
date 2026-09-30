@@ -58,5 +58,7 @@ export const createApplicationService =
       coverLetter,
     });
   };
-
+export const getCandidateApplications = async (candidateId) => {
+  return Application.findByCandidateId(candidateId);
+};
 export const createApplication = createApplicationService();

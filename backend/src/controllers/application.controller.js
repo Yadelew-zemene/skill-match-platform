@@ -1,4 +1,7 @@
-import { createApplication } from "../services/application.service.js";
+import {
+  createApplication,
+  getCandidateApplications,
+} from "../services/application.service.js";
 
 export const submitApplication = async (req, res) => {
   try {
@@ -38,6 +41,21 @@ export const submitApplication = async (req, res) => {
       message: error.statusCode
         ? error.message
         : "Failed to submit application",
+    });
+  }
+};
+export const getMyApplications = async (req, res) => {
+  try {
+    const applications = await getCandidateApplications(req.user.id);
+
+    return res.status(200).json({
+      applications,
+    });
+  } catch (error) {
+    console.error("Get candidate applications error:", error);
+
+    return res.status(500).json({
+      message: "Failed to fetch applications",
     });
   }
 };
