@@ -1,33 +1,137 @@
-import db from "../config/db.js"
+import db from "../config/db.js";
 
-export const getCandidatesForJob = async (jobId) => {
-  console.log("JOb id" ,jobId)
-  const [rows]= await db.query(
-    `SELECT jobs.id,jobs.title, u.name, u.email, MAX(m.score) AS score,r.file_path
-     FROM resumes r
-     JOIN users u ON r.user_id = u.id
-     JOIN match_scores m ON r.id = m.resume_id
-     JOIN jobs ON jobs.id=m.job_id
-     WHERE m.job_id = ?
-     GROUP BY
-      u.id,
-      u.name,
-      u.email,
-      r.file_path,
-      jobs.title
-     ORDER BY score DESC`,
-    [jobId]
+export const getJobForEmployer = async (jobId, employerId) => {
+  const [rows] = await db.query(
+    `
+    SELECT
+      id,
+      title,
+      company,
+      status
+    FROM jobs
+    WHERE id = ?
+      AND employer_id = ?
+    LIMIT 1
+    `,
+    [jobId, employerId],
   );
-  console.log(rows);
-  return  rows;
+
+  return rows[0] || null;
 };
 
+export const getCandidatesForJob = async (jobId) => {
+  const [rows] = await db.query(
+    `
+    SELECT
+      a.id AS application_id,
+      a.job_id,
+      a.candidate_id,
+      a.resume_id,
+      a.cover_letter,
+      a.status AS application_status,
+      a.applied_at,
+      a.updated_at,
 
-/*
-job_titele
-candidate-name,
-candidate_email
-score
-file_path
+      u.name AS candidate_name,
+      u.email AS candidate_email,
 
-*/
+      r.original_filename,
+
+      COALESCE(
+        (
+          SELECT MAX(ms.score)
+          FROM match_scores ms
+          WHERE ms.job_id = a.job_id
+            AND ms.resume_id = a.resume_id
+        ),
+        0
+      ) AS match_score
+
+    FROM applications a
+
+    INNER JOIN users u
+      ON u.id = a.candidate_id
+
+    INNER JOIN resumes r
+      ON r.id = a.resume_id
+
+    WHERE a.job_id = ?
+
+    ORDER BY
+      match_score DESC,
+      a.applied_at ASC
+    `,
+    [jobId],
+  );
+
+  return rows;
+};
+
+export const getCandidateDetail = async (jobId, candidateId) => {
+  const [rows] = await db.query(
+    `
+    SELECT
+      a.id AS application_id,
+      a.job_id,
+      a.candidate_id,
+      a.resume_id,
+      a.cover_letter,
+      a.status AS application_status,
+      a.applied_at,
+      a.updated_at,
+
+      u.name AS candidate_name,
+      u.email AS candidate_email,
+
+      r.original_filename,
+      r.mime_type,
+      r.file_size,
+      r.status AS resume_status,
+
+      COALESCE(
+        (
+          SELECT MAX(ms.score)
+          FROM match_scores ms
+          WHERE ms.job_id = a.job_id
+            AND ms.resume_id = a.resume_id
+        ),
+        0
+      ) AS match_score
+
+    FROM applications a
+
+    INNER JOIN users u
+      ON u.id = a.candidate_id
+
+    INNER JOIN resumes r
+      ON r.id = a.resume_id
+
+    WHERE a.job_id = ?
+      AND a.candidate_id = ?
+
+    LIMIT 1
+    `,
+    [jobId, candidateId],
+  );
+
+  if (!rows.length) {
+    return null;
+  }
+
+  const candidate = rows[0];
+
+  const [skills] = await db.query(
+    `
+    SELECT skill
+    FROM resume_skills
+    WHERE resume_id = ?
+    ORDER BY skill ASC
+    `,
+    [candidate.resume_id],
+  );
+
+  return {
+    ...candidate,
+    skills: skills.map((row) => row.skill),
+  };
+};

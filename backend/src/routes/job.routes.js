@@ -17,8 +17,12 @@ import {
   deleteEmployerJobController,
 } from "../controllers/job-management.controller.js";
 
-import { viewCandidates } from "../controllers/getCandidate.controller.js";
+import {
+  viewCandidates,
+  viewCandidateDetail,
+} from "../controllers/getCandidate.controller.js";
 
+import { viewOrDownloadCandidateResume } from "../controllers/employer-resume.controller.js";
 const router = express.Router();
 
 /*
@@ -82,6 +86,19 @@ router.get(
   viewCandidates,
 );
 
+router.get(
+  "/employer/candidates/:jobId/:candidateId/resume",
+  authMiddleware,
+  roleMiddleware("employer"),
+  viewOrDownloadCandidateResume,
+);
+
+router.get(
+  "/employer/candidates/:jobId/:candidateId",
+  authMiddleware,
+  roleMiddleware("employer"),
+  viewCandidateDetail,
+);
 /*
 |--------------------------------------------------------------------------
 | Candidate Job Browsing
