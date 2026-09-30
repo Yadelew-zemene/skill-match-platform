@@ -110,6 +110,80 @@ class Job {
 
     return rows[0] || null;
   }
+  static async findByIdForEmployer(jobId, employerId) {
+  const [rows] = await db.query(
+    `
+    SELECT
+      id,
+      employer_id,
+      title,
+      description,
+      company,
+      application_link,
+      status,
+      created_at
+    FROM jobs
+    WHERE id = ?
+      AND employer_id = ?
+    LIMIT 1
+    `,
+    [jobId, employerId]
+  );
+
+  return rows[0] || null;
+}
+
+static async updateForEmployer(jobId, employerId, data) {
+  const [result] = await db.query(
+    `
+    UPDATE jobs
+    SET
+      title = ?,
+      description = ?,
+      company = ?,
+      application_link = ?
+    WHERE id = ?
+      AND employer_id = ?
+    `,
+    [
+      data.title,
+      data.description,
+      data.company,
+      data.application_link,
+      jobId,
+      employerId,
+    ]
+  );
+
+  return result;
+}
+
+static async updateStatusForEmployer(jobId, employerId, status) {
+  const [result] = await db.query(
+    `
+    UPDATE jobs
+    SET status = ?
+    WHERE id = ?
+      AND employer_id = ?
+    `,
+    [status, jobId, employerId]
+  );
+
+  return result;
+}
+
+static async deleteForEmployer(jobId, employerId) {
+  const [result] = await db.query(
+    `
+    DELETE FROM jobs
+    WHERE id = ?
+      AND employer_id = ?
+    `,
+    [jobId, employerId]
+  );
+
+  return result;
+}
 }
 
 export default Job;
