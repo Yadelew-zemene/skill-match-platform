@@ -134,7 +134,7 @@ class Resume {
 
     return result;
   }
- 
+
   static async findSkillsByResumeId(resumeId) {
     const [rows] = await db.execute(
       `
@@ -147,6 +147,24 @@ class Resume {
     );
 
     return rows.map((row) => row.skill);
+  }
+  static async findActiveByUserId(userId) {
+    const sql = `
+    SELECT
+      id,
+      original_filename,
+      status,
+      is_active,
+      created_at
+    FROM resumes
+    WHERE user_id = ?
+      AND is_active = TRUE
+    LIMIT 1
+  `;
+
+    const [rows] = await db.execute(sql, [userId]);
+
+    return rows[0] || null;
   }
 }
 
