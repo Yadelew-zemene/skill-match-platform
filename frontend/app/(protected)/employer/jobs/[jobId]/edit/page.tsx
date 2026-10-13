@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowRight,
   Briefcase,
   CheckCircle2,
   ExternalLink,
@@ -148,75 +149,103 @@ export default function EditEmployerJobPage() {
     return <JobNotFound />;
   }
 
+  const descriptionLength = form.description.length;
+  const isActive = job.status === "active";
+
   return (
-    <div className="mx-auto max-w-6xl pb-12">
-      {/* BACK */}
-      <Link
-        href={`/employer/jobs/${job.id}`}
-        className="group mb-7 inline-flex items-center gap-2 text-sm text-[var(--muted)] transition-all duration-200 hover:-translate-x-0.5 hover:text-[var(--brand)]"
-      >
-        <ArrowLeft
-          size={16}
-          className="transition-transform duration-200 group-hover:-translate-x-0.5"
+    <div className="relative mx-auto max-w-7xl pb-12">
+      {/* Ambient page atmosphere */}
+      <div className="pointer-events-none absolute -inset-x-20 -top-24 -z-10 h-[32rem] overflow-hidden">
+        <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-[var(--primary)]/7 blur-3xl" />
+        <div className="absolute right-0 top-10 h-80 w-80 rounded-full bg-[var(--accent)]/7 blur-3xl" />
+
+        <div className="absolute left-1/2 top-24 h-56 w-[34rem] -translate-x-1/2 rounded-full bg-gradient-to-r from-[var(--primary)]/[0.035] via-transparent to-[var(--accent)]/[0.035] blur-3xl" />
+
+        <div
+          className="absolute inset-x-0 top-0 h-[24rem] opacity-[0.025]"
+          style={{
+            backgroundImage:
+              "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
+            backgroundSize: "36px 36px",
+          }}
         />
-        Back to job details
-      </Link>
+      </div>
 
-      {/* HEADER */}
-      <section className="relative mb-7 overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)]">
-        {/* subtle brand gradient */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,185,66,0.12),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(0,186,224,0.06),transparent_30%)]" />
+      {/* Back navigation */}
+      <div className="mb-6">
+        <Link
+          href={`/employer/jobs/${job.id}`}
+          className="group inline-flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-[var(--text-muted)] transition-all duration-300 hover:bg-[var(--surface)] hover:text-[var(--primary)]"
+        >
+          <ArrowLeft
+            size={16}
+            className="transition-transform duration-300 group-hover:-translate-x-0.5"
+          />
+          Back to job details
+        </Link>
+      </div>
 
-        <div className="relative flex flex-col gap-5 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[var(--brand)]/20 bg-[var(--brand)]/10 shadow-[0_0_30px_rgba(245,185,66,0.08)]">
-              <Briefcase size={22} className="text-[var(--brand)]" />
-            </div>
+      {/* Page header */}
+      <section className="group relative mb-6 overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--primary)] to-[var(--accent)] opacity-80" />
 
-            <div className="min-w-0">
-              <div className="mb-2 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--brand)]">
-                  <Sparkles size={12} />
-                  Job management
-                </span>
+        <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[var(--primary)]/8 blur-3xl transition-opacity duration-500 group-hover:bg-[var(--primary)]/12" />
 
-                <span className="text-[var(--muted-foreground)]">/</span>
+        <div className="relative p-6 sm:p-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex min-w-0 items-start gap-4">
+              <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--primary-light)] to-[var(--accent-light)] text-[var(--primary)] ring-1 ring-[var(--primary)]/10">
+                <Briefcase size={23} strokeWidth={1.9} />
 
-                <span className="text-xs text-[var(--muted-foreground)]">
-                  Job #{job.id}
-                </span>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/50 to-transparent" />
               </div>
 
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                Edit job
-              </h1>
+              <div className="min-w-0">
+                <div className="mb-2.5 flex flex-wrap items-center gap-2.5">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--primary)]">
+                    <Sparkles size={12} />
+                    Job management
+                  </span>
 
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-                Update the details of this opportunity and keep your posting
-                accurate for candidates.
-              </p>
+                  <span className="text-[var(--text-disabled)]">/</span>
+
+                  <span className="text-xs text-[var(--text-muted)]">
+                    Job #{job.id}
+                  </span>
+                </div>
+
+                <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-3xl">
+                  Edit job
+                </h1>
+
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+                  Update the information candidates see for this opportunity.
+                  Your changes will be applied when you save.
+                </p>
+              </div>
             </div>
-          </div>
 
-          <JobStatus status={job.status} />
+            <JobStatus status={job.status} />
+          </div>
         </div>
       </section>
 
-      {/* FORM */}
       <form onSubmit={handleSubmit}>
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
-          {/* MAIN FORM */}
-          <main className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
-            <div className="mb-8">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+          {/* Main form */}
+          <main className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--primary)]/30 to-transparent" />
+
+            <div className="border-b border-[var(--border)] px-6 py-5 sm:px-8">
               <SectionHeading
                 icon={<FileText size={17} />}
                 title="Job information"
-                description="Update the information candidates will see."
+                description="Keep the opportunity clear, accurate, and easy to understand."
               />
             </div>
 
-            <div className="space-y-6">
-              {/* TITLE + COMPANY */}
+            <div className="space-y-7 p-6 sm:p-8">
+              {/* Title + company */}
               <div className="grid gap-6 md:grid-cols-2">
                 <FormField
                   label="Job title"
@@ -243,7 +272,7 @@ export default function EditEmployerJobPage() {
                   <div className="relative">
                     <Briefcase
                       size={16}
-                      className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                      className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
                     />
 
                     <input
@@ -260,23 +289,26 @@ export default function EditEmployerJobPage() {
                 </FormField>
               </div>
 
-              {/* DESCRIPTION */}
+              {/* Description */}
               <FormField
                 label="Job description"
                 required
                 hint="Describe the role, responsibilities, requirements, and expectations."
               >
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="job-description"
-                      className="text-sm font-medium text-gray-900 dark:text-gray-100"
+                <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] transition-all duration-200 focus-within:border-[var(--primary)]/40 focus-within:ring-4 focus-within:ring-[var(--primary)]/8">
+                  <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface-soft)] px-4 py-2.5">
+                    <span className="text-[11px] font-medium text-[var(--text-muted)]">
+                      Role overview
+                    </span>
+
+                    <span
+                      className={`text-[11px] font-medium ${
+                        descriptionLength > 0
+                          ? "text-[var(--text-secondary)]"
+                          : "text-[var(--text-muted)]"
+                      }`}
                     >
-                      Job description
-                      <span className="text-red-500 ml-0.5">*</span>
-                    </label>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {form.description?.length || 0} characters
+                      {descriptionLength} characters
                     </span>
                   </div>
 
@@ -288,24 +320,18 @@ export default function EditEmployerJobPage() {
                     }
                     placeholder="Describe the position, responsibilities, required skills, qualifications, and other important information..."
                     disabled={saving}
-                    rows={8}
-                    className="w-full rounded-lg border border-gray-300 bg-white p-3 text-base sm:text-sm leading-relaxed text-gray-900 placeholder:text-gray-400 shadow-sm transition duration-150 ease-in-out focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-75 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/20 min-h-[180px] sm:min-h-[260px] resize-y"
+                    rows={11}
+                    className="min-h-[280px] w-full resize-y border-0 bg-transparent px-4 py-4 text-sm leading-7 text-[var(--text-primary)] outline-none placeholder:text-[var(--text-disabled)] disabled:cursor-not-allowed disabled:opacity-60"
                   />
-
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Describe the role, responsibilities, requirements, and
-                    expectations. Keep it clear and easy to scan.
-                  </p>
                 </div>
 
-                <div className="mt-2 flex justify-between text-[11px] text-[var(--muted-foreground)]">
-                  <span>Keep the description clear and easy to scan.</span>
-
-                  <span>{form.description.length} characters</span>
-                </div>
+                <p className="mt-2 text-[11px] leading-5 text-[var(--text-muted)]">
+                  Candidates should be able to understand the role without
+                  needing additional context.
+                </p>
               </FormField>
 
-              {/* APPLICATION LINK */}
+              {/* Application link */}
               <FormField
                 label="Application link"
                 required
@@ -314,7 +340,7 @@ export default function EditEmployerJobPage() {
                 <div className="relative">
                   <Globe
                     size={16}
-                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
                   />
 
                   <input
@@ -334,7 +360,7 @@ export default function EditEmployerJobPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Open application link"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] transition-colors duration-200 hover:text-[var(--brand)]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--primary-light)] hover:text-[var(--primary)]"
                     >
                       <ExternalLink size={16} />
                     </a>
@@ -344,119 +370,169 @@ export default function EditEmployerJobPage() {
             </div>
           </main>
 
-          {/* SIDEBAR */}
+          {/* Sidebar */}
           <aside className="space-y-6">
-            {/* STATUS CARD */}
-            <section className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6">
-              <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-[var(--brand)]/5 blur-2xl" />
+            {/* Publishing status */}
+            <section className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-sm)]">
+              <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-[var(--primary)]/7 blur-2xl" />
 
               <div className="relative">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
-                  Publishing status
-                </p>
+                <div className="flex items-center gap-2">
+                  <Sparkles size={14} className="text-[var(--primary)]" />
+
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                    Publishing status
+                  </p>
+                </div>
 
                 <div className="mt-5 flex items-start gap-3">
                   <div
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                      job.status === "active"
-                        ? "bg-emerald-400/10 text-emerald-400"
-                        : "bg-[var(--surface-soft)] text-[var(--muted-foreground)]"
+                      isActive
+                        ? "bg-[var(--success-light)] text-[var(--success)]"
+                        : "bg-[var(--surface-soft)] text-[var(--text-muted)]"
                     }`}
                   >
-                    <CheckCircle2 size={19} />
+                    {isActive ? (
+                      <CheckCircle2 size={19} />
+                    ) : (
+                      <span className="h-2 w-2 rounded-full bg-[var(--text-muted)]" />
+                    )}
                   </div>
 
                   <div>
-                    <p className="text-sm font-semibold">
-                      {job.status === "active"
-                        ? "Currently active"
-                        : "Currently closed"}
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
+                      {isActive ? "Currently active" : "Currently closed"}
                     </p>
 
-                    <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-                      {job.status === "active"
-                        ? "This posting is currently visible to candidates."
-                        : "This posting is currently closed to candidates."}
+                    <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                      {isActive
+                        ? "Candidates can currently view this opportunity."
+                        : "This opportunity is currently closed to candidates."}
                     </p>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* GUIDANCE */}
-            <section className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6">
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,185,66,0.08),transparent_45%)]" />
+            {/* Editing guidance */}
+            <section className="relative overflow-hidden rounded-2xl border border-[var(--primary)]/10 bg-gradient-to-br from-[var(--primary-light)] via-[var(--surface)] to-[var(--accent-light)] p-6">
+              <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[var(--primary)]/10 blur-2xl" />
 
               <div className="relative">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--brand)]/10 text-[var(--brand)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface)] text-[var(--primary)] shadow-sm">
                   <Sparkles size={17} />
                 </div>
 
-                <h2 className="mt-4 text-sm font-semibold">
+                <h2 className="mt-4 text-sm font-semibold text-[var(--text-primary)]">
                   Keep it candidate-ready
                 </h2>
 
-                <p className="mt-2 text-xs leading-6 text-[var(--muted)]">
-                  Clear titles, detailed descriptions, and a working application
-                  link help candidates understand and apply for your
-                  opportunity.
+                <p className="mt-2 text-xs leading-6 text-[var(--text-secondary)]">
+                  Strong job postings make it easier for relevant candidates to
+                  understand the opportunity and decide whether to apply.
                 </p>
 
                 <div className="mt-5 space-y-3">
-                  <GuidanceItem>Use a specific job title</GuidanceItem>
-
                   <GuidanceItem>
-                    Include responsibilities and requirements
+                    Use a specific, recognizable job title
                   </GuidanceItem>
 
                   <GuidanceItem>
-                    Check that the application link works
+                    Explain responsibilities and required skills
+                  </GuidanceItem>
+
+                  <GuidanceItem>
+                    Keep the application link current and accessible
                   </GuidanceItem>
                 </div>
+              </div>
+            </section>
+
+            {/* Current values */}
+            <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-sm)]">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                Before you save
+              </p>
+
+              <div className="mt-4 space-y-3">
+                <ReviewRow
+                  label="Title"
+                  value={form.title.trim() ? "Provided" : "Missing"}
+                  complete={Boolean(form.title.trim())}
+                />
+
+                <ReviewRow
+                  label="Description"
+                  value={
+                    descriptionLength > 0
+                      ? `${descriptionLength} characters`
+                      : "Missing"
+                  }
+                  complete={Boolean(form.description.trim())}
+                />
+
+                <ReviewRow
+                  label="Application link"
+                  value={form.application_link.trim() ? "Provided" : "Missing"}
+                  complete={Boolean(form.application_link.trim())}
+                />
               </div>
             </section>
           </aside>
         </div>
 
-        {/* ACTION BAR */}
+        {/* Save bar */}
         <div className="sticky bottom-4 z-20 mt-6">
-          <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)]/95 p-3 shadow-2xl backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
-            <div className="hidden pl-3 sm:block">
-              <p className="text-xs font-medium text-[var(--muted)]">
-                Changes are saved when you click Save changes.
-              </p>
-            </div>
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]/95 p-3 shadow-2xl backdrop-blur-xl">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--primary)]/40 to-[var(--accent)]/40" />
 
-            <div className="flex w-full gap-2 sm:w-auto">
-              <Link
-                href={`/employer/jobs/${job.id}`}
-                className="flex flex-1 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] px-5 py-3 text-sm font-semibold transition-all duration-200 hover:border-[var(--brand)]/40 hover:bg-[var(--surface-elevated)] hover:text-[var(--brand)] sm:flex-none"
-              >
-                Cancel
-              </Link>
+            <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="hidden pl-3 sm:block">
+                <p className="text-xs font-medium text-[var(--text-secondary)]">
+                  Review your changes before saving.
+                </p>
 
-              <button
-                type="submit"
-                disabled={saving}
-                className="group relative flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[var(--brand)] to-[#ffd36a] px-6 py-3 text-sm font-bold text-[#080A0D] shadow-[0_8px_30px_rgba(245,185,66,0.16)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_35px_rgba(245,185,66,0.24)] disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-60 sm:flex-none"
-              >
-                <span className="absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-500 group-hover:translate-x-full" />
+                <p className="mt-0.5 text-[11px] text-[var(--text-muted)]">
+                  You can continue editing this posting at any time.
+                </p>
+              </div>
 
-                {saving ? (
-                  <>
-                    <Loader2 size={16} className="relative animate-spin" />
-                    <span className="relative">Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <Save
-                      size={16}
-                      className="relative transition-transform duration-200 group-hover:scale-105"
-                    />
-                    <span className="relative">Save changes</span>
-                  </>
-                )}
-              </button>
+              <div className="flex w-full gap-2 sm:w-auto">
+                <Link
+                  href={`/employer/jobs/${job.id}`}
+                  className="flex flex-1 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] transition-all duration-300 hover:border-[var(--primary)]/25 hover:bg-[var(--primary-light)] hover:text-[var(--primary)] sm:flex-none"
+                >
+                  Cancel
+                </Link>
+
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="group relative flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--primary)]/15 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[var(--primary)]/20 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-60 sm:flex-none"
+                >
+                  <span className="absolute inset-0 -translate-x-full bg-white/15 transition-transform duration-500 group-hover:translate-x-full" />
+
+                  {saving ? (
+                    <>
+                      <Loader2 size={16} className="relative animate-spin" />
+                      <span className="relative">Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save
+                        size={16}
+                        className="relative transition-transform duration-200 group-hover:scale-105"
+                      />
+                      <span className="relative">Save changes</span>
+                      <ArrowRight
+                        size={15}
+                        className="relative transition-transform duration-300 group-hover:translate-x-0.5"
+                      />
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -480,14 +556,16 @@ function SectionHeading({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--brand)]/10 text-[var(--brand)]">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary-light)] to-[var(--accent-light)] text-[var(--primary)]">
         {icon}
       </div>
 
       <div>
-        <h2 className="text-base font-semibold">{title}</h2>
+        <h2 className="text-base font-semibold text-[var(--text-primary)]">
+          {title}
+        </h2>
 
-        <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">
+        <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
           {description}
         </p>
       </div>
@@ -509,14 +587,14 @@ function FormField({
   return (
     <div>
       <label className="mb-2 block">
-        <span className="text-sm font-semibold">
+        <span className="text-sm font-semibold text-[var(--text-primary)]">
           {label}
 
-          {required && <span className="ml-1 text-[var(--brand)]">*</span>}
+          {required && <span className="ml-1 text-[var(--primary)]">*</span>}
         </span>
 
         {hint && (
-          <span className="mt-1 block text-[11px] leading-5 text-[var(--muted-foreground)]">
+          <span className="mt-1 block text-[11px] leading-5 text-[var(--text-muted)]">
             {hint}
           </span>
         )}
@@ -530,9 +608,40 @@ function FormField({
 function GuidanceItem({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-start gap-2.5">
-      <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-[var(--brand)]" />
+      <CheckCircle2
+        size={14}
+        className="mt-0.5 shrink-0 text-[var(--primary)]"
+      />
 
-      <span className="text-xs leading-5 text-[var(--muted)]">{children}</span>
+      <span className="text-xs leading-5 text-[var(--text-secondary)]">
+        {children}
+      </span>
+    </div>
+  );
+}
+
+function ReviewRow({
+  label,
+  value,
+  complete,
+}: {
+  label: string;
+  value: string;
+  complete: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] px-3.5 py-3">
+      <span className="text-xs font-medium text-[var(--text-secondary)]">
+        {label}
+      </span>
+
+      <span
+        className={`text-[11px] font-semibold ${
+          complete ? "text-[var(--success)]" : "text-[var(--error)]"
+        }`}
+      >
+        {value}
+      </span>
     </div>
   );
 }
@@ -544,13 +653,13 @@ function JobStatus({ status }: { status: EmployerJob["status"] }) {
     <div
       className={`inline-flex w-fit shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold ${
         active
-          ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-400"
-          : "border-[var(--border)] bg-[var(--surface-soft)] text-[var(--muted-foreground)]"
+          ? "border-[var(--success)]/20 bg-[var(--success-light)] text-[var(--success)]"
+          : "border-[var(--border)] bg-[var(--surface-soft)] text-[var(--text-muted)]"
       }`}
     >
       <span
         className={`h-1.5 w-1.5 rounded-full ${
-          active ? "bg-emerald-400" : "bg-[var(--muted-foreground)]"
+          active ? "bg-[var(--success)]" : "bg-[var(--text-muted)]"
         }`}
       />
 
@@ -565,17 +674,18 @@ function JobStatus({ status }: { status: EmployerJob["status"] }) {
 
 function EditJobSkeleton() {
   return (
-    <div className="mx-auto max-w-6xl animate-pulse pb-12">
-      <div className="mb-7 h-5 w-40 rounded-lg bg-[var(--surface-elevated)]" />
+    <div className="relative mx-auto max-w-7xl animate-pulse pb-12">
+      <div className="mb-6 h-8 w-40 rounded-lg bg-[var(--surface-soft)]" />
 
-      <div className="mb-7 h-36 rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+      <div className="mb-6 h-40 rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <div className="h-[680px] rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="h-[720px] rounded-2xl border border-[var(--border)] bg-[var(--surface)]" />
 
         <div className="space-y-6">
-          <div className="h-40 rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
-          <div className="h-72 rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+          <div className="h-44 rounded-2xl border border-[var(--border)] bg-[var(--surface)]" />
+          <div className="h-72 rounded-2xl border border-[var(--border)] bg-[var(--surface)]" />
+          <div className="h-48 rounded-2xl border border-[var(--border)] bg-[var(--surface)]" />
         </div>
       </div>
     </div>
@@ -588,25 +698,31 @@ function EditJobSkeleton() {
 
 function JobNotFound() {
   return (
-    <div className="mx-auto max-w-xl py-20 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--brand)]/10">
-        <Briefcase size={24} className="text-[var(--brand)]" />
+    <div className="relative mx-auto max-w-xl py-20 text-center">
+      <div className="pointer-events-none absolute left-1/2 top-10 h-40 w-40 -translate-x-1/2 rounded-full bg-[var(--primary)]/8 blur-3xl" />
+
+      <div className="relative">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--primary-light)] to-[var(--accent-light)] text-[var(--primary)] ring-1 ring-[var(--primary)]/10">
+          <Briefcase size={24} />
+        </div>
+
+        <h1 className="mt-5 text-xl font-bold text-[var(--text-primary)]">
+          Job not found
+        </h1>
+
+        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
+          This job may have been deleted, or you may not have permission to edit
+          it.
+        </p>
+
+        <Link
+          href="/employer/jobs-posted"
+          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[var(--primary)]/15 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[var(--primary)]/20"
+        >
+          <ArrowLeft size={15} />
+          Back to jobs
+        </Link>
       </div>
-
-      <h1 className="mt-5 text-xl font-semibold">Job not found</h1>
-
-      <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-        The job may have been deleted, or you may not have permission to edit
-        it.
-      </p>
-
-      <Link
-        href="/employer/jobs-posted"
-        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[var(--brand)] to-[#ffd36a] px-5 py-2.5 text-sm font-bold text-[#080A0D] transition-all duration-200 hover:-translate-y-0.5"
-      >
-        <ArrowLeft size={15} />
-        Back to jobs
-      </Link>
     </div>
   );
 }

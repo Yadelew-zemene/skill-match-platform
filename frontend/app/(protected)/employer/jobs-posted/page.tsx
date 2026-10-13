@@ -41,10 +41,14 @@ export default function JobsPostedPage() {
     try {
       setLoading(true);
 
-      const data = await fetchEmployerJobs();
+      const response = await fetchEmployerJobs();
+      const data = normalizeJobsResponse(response);
+
       setJobs(data);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to load employer jobs:", error);
+
+      setJobs([]);
       toast.error("Failed to load jobs");
     } finally {
       setLoading(false);
@@ -99,12 +103,20 @@ export default function JobsPostedPage() {
       const updatedJob = await updateEmployerJobStatus(job.id, nextStatus);
 
       setJobs((current) =>
-        current.map((item) => (item.id === updatedJob.id ? updatedJob : item)),
+        current.map((item) =>
+          item.id === updatedJob.id
+            ? {
+                ...item,
+                ...updatedJob,
+              }
+            : item,
+        ),
       );
 
       toast.success(nextStatus === "active" ? "Job reopened" : "Job closed");
     } catch (error) {
-      console.error(error);
+      console.error("Failed to update job status:", error);
+
       toast.error("Failed to update job status");
     } finally {
       setProcessingJobId(null);
@@ -128,7 +140,8 @@ export default function JobsPostedPage() {
 
       toast.success("Job deleted");
     } catch (error) {
-      console.error(error);
+      console.error("Failed to delete job:", error);
+
       toast.error("Failed to delete job");
     } finally {
       setProcessingJobId(null);
@@ -136,35 +149,59 @@ export default function JobsPostedPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl">
-      {/* HEADER */}
-      <section className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--brand)]">
-            Job management
-          </p>
+    <div className="relative mx-auto max-w-7xl">
+      {/* =====================================================
+          PAGE HEADER
+      ===================================================== */}
+      <section className="relative mb-8 overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[var(--primary)]/10 blur-3xl" />
 
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Your job postings
-          </h1>
+        <div className="pointer-events-none absolute right-32 top-20 h-48 w-48 rounded-full bg-[var(--accent)]/8 blur-3xl" />
 
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">
-            Manage your open positions, review applications, and keep your job
-            postings up to date.
-          </p>
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.025]"
+          style={{
+            backgroundImage:
+              "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+
+        <div className="relative flex flex-col gap-6 px-6 py-7 sm:px-8 sm:py-9 lg:flex-row lg:items-center lg:justify-between lg:px-10">
+          <div>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/15 bg-[var(--primary-light)] px-3 py-1.5 text-xs font-semibold text-[var(--primary)]">
+              <Briefcase size={13} />
+              Job management
+            </div>
+
+            <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">
+              Your job postings
+            </h1>
+
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-base">
+              Manage your opportunities, monitor applications, and keep your
+              hiring pipeline organized.
+            </p>
+          </div>
+
+          <Link
+            href="/employer/post-jobs"
+            className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--primary)]/15 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[var(--primary)]/20"
+          >
+            <Plus size={17} />
+            Post a new job
+            <ArrowRight
+              size={15}
+              className="transition-transform duration-300 group-hover:translate-x-0.5"
+            />
+          </Link>
         </div>
-
-        <Link
-          href="/employer/post-jobs"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--brand)] px-5 py-3 text-sm font-semibold text-[#080A0D] transition hover:bg-[var(--brand-hover)]"
-        >
-          <Plus size={17} />
-          Post a new job
-        </Link>
       </section>
 
-      {/* STATS */}
-      <section className="mb-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {/* =====================================================
+          STATS
+      ===================================================== */}
+      <section className="mb-8 grid grid-cols-2 gap-4 xl:grid-cols-4">
         <StatCard
           label="Total jobs"
           value={stats.total}
@@ -175,56 +212,65 @@ export default function JobsPostedPage() {
           label="Active"
           value={stats.active}
           icon={<CheckCircle2 size={18} />}
+          tone="success"
         />
 
         <StatCard
           label="Closed"
           value={stats.closed}
           icon={<XCircle size={18} />}
+          tone="neutral"
         />
 
         <StatCard
           label="Applicants"
           value={stats.applicants}
           icon={<Users size={18} />}
+          tone="accent"
         />
       </section>
 
-      {/* TOOLBAR */}
-      <section className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="relative w-full lg:max-w-md">
-          <Search
-            size={17}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
-          />
+      {/* =====================================================
+          TOOLBAR
+      ===================================================== */}
+      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-sm)] sm:p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative w-full lg:max-w-md">
+            <Search
+              size={17}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+            />
 
-          <input
-            type="text"
-            placeholder="Search jobs or companies..."
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-sm outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--brand)]"
-          />
-        </div>
+            <input
+              type="text"
+              placeholder="Search jobs or companies..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] outline-none transition-all placeholder:text-[var(--text-muted)] focus:border-[var(--primary)]/40 focus:ring-4 focus:ring-[var(--primary)]/5"
+            />
+          </div>
 
-        <div className="flex items-center justify-between gap-3">
-          <StatusFilter value={statusFilter} onChange={setStatusFilter} />
+          <div className="flex items-center justify-between gap-3">
+            <StatusFilter value={statusFilter} onChange={setStatusFilter} />
 
-          <span className="whitespace-nowrap text-sm text-[var(--muted-foreground)]">
-            {loading
-              ? "Loading..."
-              : `${filteredJobs.length} ${
-                  filteredJobs.length === 1 ? "job" : "jobs"
-                }`}
-          </span>
+            <span className="whitespace-nowrap text-xs font-medium text-[var(--text-muted)]">
+              {loading
+                ? "Loading..."
+                : `${filteredJobs.length} ${
+                    filteredJobs.length === 1 ? "job" : "jobs"
+                  }`}
+            </span>
+          </div>
         </div>
       </section>
 
-      {/* JOB LIST */}
-      <section className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+      {/* =====================================================
+          JOB LIST
+      ===================================================== */}
+      <section className="overflow-visible rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)]">
         {/* DESKTOP */}
         <div className="hidden md:block">
-          <div className="grid grid-cols-[minmax(0,2fr)_1fr_1fr_auto] gap-6 border-b border-[var(--border)] px-6 py-4 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+          <div className="grid grid-cols-[minmax(0,2fr)_1fr_1fr_auto] gap-6 border-b border-[var(--border)] bg-[var(--surface-soft)]/50 px-6 py-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
             <div>Job</div>
             <div>Posted</div>
             <div>Applicants</div>
@@ -234,7 +280,7 @@ export default function JobsPostedPage() {
           {loading ? (
             <LoadingRows />
           ) : filteredJobs.length === 0 ? (
-            <EmptyState hasSearch={Boolean(search)} />
+            <EmptyState hasSearch={Boolean(search)} hasJobs={jobs.length > 0} />
           ) : (
             <div className="divide-y divide-[var(--border)]">
               {filteredJobs.map((job) => (
@@ -259,7 +305,7 @@ export default function JobsPostedPage() {
           {loading ? (
             <MobileLoading />
           ) : filteredJobs.length === 0 ? (
-            <EmptyState hasSearch={Boolean(search)} />
+            <EmptyState hasSearch={Boolean(search)} hasJobs={jobs.length > 0} />
           ) : (
             <div className="divide-y divide-[var(--border)]">
               {filteredJobs.map((job) => (
@@ -280,59 +326,127 @@ export default function JobsPostedPage() {
         </div>
       </section>
 
-      {/* FOOTER CTA */}
+      {/* =====================================================
+          BOTTOM ACTION
+      ===================================================== */}
       {!loading && jobs.length > 0 && (
-        <div className="mt-6 flex flex-col items-start justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-5 sm:flex-row sm:items-center">
-          <div>
-            <p className="text-sm font-semibold">Need to review candidates?</p>
+        <section className="relative mt-6 overflow-hidden rounded-2xl border border-[var(--primary)]/10 bg-gradient-to-r from-[var(--primary-light)]/60 via-[var(--surface)] to-[var(--accent-light)]/50 p-5 sm:p-6">
+          <div className="pointer-events-none absolute -right-10 -top-20 h-40 w-40 rounded-full bg-[var(--accent)]/10 blur-3xl" />
 
-            <p className="mt-1 text-xs text-[var(--muted)]">
-              See candidates associated with your job postings.
-            </p>
+          <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--surface)] shadow-sm">
+                <Users size={18} className="text-[var(--primary)]" />
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">
+                  Ready to review candidates?
+                </p>
+
+                <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                  Open a job to review applicants, compare match scores, and
+                  explore candidate skills.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/employer/jobs-posted"
+              className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-[var(--primary)] transition hover:text-[var(--primary-hover)]"
+            >
+              Choose a job
+              <ArrowRight size={15} />
+            </Link>
           </div>
-
-          <Link
-            href="/employer/candidates"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--brand)] hover:text-[var(--brand-hover)]"
-          >
-            View candidates
-            <ArrowRight size={15} />
-          </Link>
-        </div>
+        </section>
       )}
     </div>
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
+   RESPONSE NORMALIZATION
+========================================================= */
+
+function normalizeJobsResponse(response: unknown): EmployerJob[] {
+  if (Array.isArray(response)) {
+    return response as EmployerJob[];
+  }
+
+  if (!response || typeof response !== "object") {
+    return [];
+  }
+
+  const value = response as Record<string, unknown>;
+
+  if (Array.isArray(value.jobs)) {
+    return value.jobs as EmployerJob[];
+  }
+
+  if (Array.isArray(value.data)) {
+    return value.data as EmployerJob[];
+  }
+
+  if (
+    value.data &&
+    typeof value.data === "object" &&
+    Array.isArray((value.data as Record<string, unknown>).jobs)
+  ) {
+    return (value.data as Record<string, unknown>).jobs as EmployerJob[];
+  }
+
+  return [];
+}
+
+/* =========================================================
    STAT CARD
-------------------------------------------------- */
+========================================================= */
 
 function StatCard({
   label,
   value,
   icon,
+  tone = "primary",
 }: {
   label: string;
   value: number;
   icon: ReactNode;
+  tone?: "primary" | "success" | "accent" | "neutral";
 }) {
+  const toneClasses = {
+    primary: "bg-[var(--primary-light)] text-[var(--primary)]",
+    success: "bg-[var(--success-light)] text-[var(--success)]",
+    accent: "bg-[var(--accent-light)] text-[var(--accent)]",
+    neutral: "bg-[var(--surface-soft)] text-[var(--text-secondary)]",
+  };
+
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
-      <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--brand)]/10 text-[var(--brand)]">
-        {icon}
+    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-sm)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--primary)]/20 hover:shadow-[var(--shadow-md)]">
+      <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[var(--primary)]/8 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+      <div className="relative">
+        <div
+          className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${toneClasses[tone]}`}
+        >
+          {icon}
+        </div>
+
+        <p className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+          {value}
+        </p>
+
+        <p className="mt-1 text-xs font-medium text-[var(--text-muted)]">
+          {label}
+        </p>
       </div>
-
-      <p className="text-2xl font-bold tracking-tight">{value}</p>
-
-      <p className="mt-1 text-xs text-[var(--muted-foreground)]">{label}</p>
     </div>
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
    STATUS FILTER
-------------------------------------------------- */
+========================================================= */
 
 function StatusFilter({
   value,
@@ -346,26 +460,24 @@ function StatusFilter({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value as StatusFilter)}
-        className="appearance-none rounded-xl border border-[var(--border)] bg-[var(--surface)] py-2.5 pl-4 pr-9 text-sm outline-none focus:border-[var(--brand)]"
+        className="appearance-none rounded-xl border border-[var(--border)] bg-[var(--background)] py-2.5 pl-4 pr-10 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--primary)]/40 focus:ring-4 focus:ring-[var(--primary)]/5"
       >
         <option value="all">All statuses</option>
-
         <option value="active">Active</option>
-
         <option value="closed">Closed</option>
       </select>
 
       <ChevronDown
         size={15}
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)]"
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
       />
     </div>
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
    DESKTOP JOB ROW
-------------------------------------------------- */
+========================================================= */
 
 function DesktopJobRow({
   job,
@@ -383,47 +495,51 @@ function DesktopJobRow({
   onDelete: () => void;
 }) {
   return (
-    <div className="group grid grid-cols-[minmax(0,2fr)_1fr_1fr_auto] items-center gap-6 px-6 py-5 transition hover:bg-[var(--surface-elevated)]">
-      {/* JOB */}
+    <div className="group relative grid grid-cols-[minmax(0,2fr)_1fr_1fr_auto] items-center gap-6 px-6 py-5 transition-all duration-300 hover:bg-[var(--surface-soft)]/60">
       <Link
         href={`/employer/jobs/${job.id}`}
         className="flex min-w-0 items-center gap-4"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--brand)]/10">
-          <Briefcase size={18} className="text-[var(--brand)]" />
+        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-[var(--primary-light)] to-[var(--accent-light)]">
+          <Briefcase size={18} className="relative text-[var(--primary)]" />
         </div>
 
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold transition group-hover:text-[var(--brand)]">
+          <p className="truncate text-sm font-semibold text-[var(--text-primary)] transition group-hover:text-[var(--primary)]">
             {job.title}
           </p>
 
-          <p className="mt-1 truncate text-xs text-[var(--muted-foreground)]">
+          <p className="mt-1 truncate text-xs text-[var(--text-muted)]">
             {job.company}
           </p>
         </div>
       </Link>
 
-      {/* POSTED */}
-      <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
-        <Calendar size={15} />
+      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
+        <Calendar size={15} className="text-[var(--text-muted)]" />
+
         {formatDate(job.created_at)}
       </div>
 
-      {/* APPLICANTS */}
-      <div className="flex items-center gap-2 text-sm">
-        <Users size={15} className="text-[var(--muted)]" />
+      <Link
+        href={`/employer/jobs/${job.id}/applications`}
+        className="flex items-center gap-2 text-sm text-[var(--text-secondary)] transition hover:text-[var(--primary)]"
+      >
+        <Users size={15} className="text-[var(--text-muted)]" />
 
-        <span className="font-semibold">{job.applicants ?? 0}</span>
-      </div>
+        <span className="font-semibold text-[var(--text-primary)]">
+          {job.applicants ?? 0}
+        </span>
 
-      {/* ACTIONS */}
+        <span>applicants</span>
+      </Link>
+
       <div className="flex items-center justify-end gap-2">
         <StatusBadge status={job.status} />
 
         <Link
           href={`/employer/jobs/${job.id}`}
-          className="ml-3 inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-[var(--brand)] transition hover:bg-[var(--brand)]/10"
+          className="ml-3 inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--primary-light)]"
         >
           View
           <ArrowRight size={14} />
@@ -435,7 +551,7 @@ function DesktopJobRow({
             disabled={processing}
             onClick={onMenu}
             aria-label={`Actions for ${job.title}`}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--muted)] transition hover:bg-[var(--surface)] hover:text-[var(--brand)] disabled:opacity-50"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--text-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--primary)] disabled:opacity-50"
           >
             <MoreHorizontal size={18} />
           </button>
@@ -453,9 +569,9 @@ function DesktopJobRow({
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
    MOBILE JOB CARD
-------------------------------------------------- */
+========================================================= */
 
 function MobileJobCard({
   job,
@@ -473,19 +589,19 @@ function MobileJobCard({
   onDelete: () => void;
 }) {
   return (
-    <div className="group p-5">
+    <div className="group p-5 transition hover:bg-[var(--surface-soft)]/50">
       <div className="flex items-start justify-between gap-4">
         <Link href={`/employer/jobs/${job.id}`} className="flex min-w-0 gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--brand)]/10">
-            <Briefcase size={18} className="text-[var(--brand)]" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary-light)] to-[var(--accent-light)]">
+            <Briefcase size={18} className="text-[var(--primary)]" />
           </div>
 
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold transition group-hover:text-[var(--brand)]">
+            <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
               {job.title}
             </p>
 
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-1 truncate text-xs text-[var(--text-muted)]">
               {job.company}
             </p>
           </div>
@@ -497,7 +613,7 @@ function MobileJobCard({
             disabled={processing}
             onClick={onMenu}
             aria-label={`Actions for ${job.title}`}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--muted)] transition hover:bg-[var(--surface-elevated)] hover:text-[var(--brand)]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--primary)] disabled:opacity-50"
           >
             <MoreHorizontal size={17} />
           </button>
@@ -512,38 +628,49 @@ function MobileJobCard({
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-[var(--muted-foreground)]">
+      <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-[var(--text-muted)]">
         <span className="flex items-center gap-1.5">
           <Calendar size={13} />
           {formatDate(job.created_at)}
         </span>
 
-        <span className="flex items-center gap-1.5">
+        <Link
+          href={`/employer/jobs/${job.id}/applications`}
+          className="flex items-center gap-1.5 transition hover:text-[var(--primary)]"
+        >
           <Users size={13} />
           {job.applicants ?? 0} applicants
-        </span>
+        </Link>
 
         <StatusBadge status={job.status} />
       </div>
 
-      <Link
-        href={`/employer/jobs/${job.id}`}
-        className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4 text-sm font-semibold text-[var(--brand)]"
-      >
-        <span>View job details</span>
+      <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
+        <Link
+          href={`/employer/jobs/${job.id}/applications`}
+          className="text-sm font-semibold text-[var(--text-secondary)] transition hover:text-[var(--primary)]"
+        >
+          Applications
+        </Link>
 
-        <ArrowRight
-          size={15}
-          className="transition-transform group-hover:translate-x-0.5"
-        />
-      </Link>
+        <Link
+          href={`/employer/jobs/${job.id}`}
+          className="flex items-center gap-1.5 text-sm font-semibold text-[var(--primary)]"
+        >
+          View job
+          <ArrowRight
+            size={15}
+            className="transition-transform group-hover:translate-x-0.5"
+          />
+        </Link>
+      </div>
     </div>
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
    JOB ACTION MENU
-------------------------------------------------- */
+========================================================= */
 
 function JobMenu({
   job,
@@ -555,10 +682,10 @@ function JobMenu({
   onDelete: () => void;
 }) {
   return (
-    <div className="absolute right-0 top-11 z-30 w-44 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1.5 shadow-xl">
+    <div className="absolute right-0 top-11 z-50 w-44 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1.5 shadow-xl">
       <Link
         href={`/employer/jobs/${job.id}/edit`}
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs transition hover:bg-[var(--surface-elevated)]"
+        className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-xs text-[var(--text-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
       >
         <Edit2 size={14} />
         Edit job
@@ -567,7 +694,7 @@ function JobMenu({
       <button
         type="button"
         onClick={onStatusChange}
-        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs transition hover:bg-[var(--surface-elevated)]"
+        className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-xs text-[var(--text-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
       >
         {job.status === "active" ? (
           <>
@@ -585,7 +712,7 @@ function JobMenu({
       <button
         type="button"
         onClick={onDelete}
-        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-red-400 transition hover:bg-red-500/10"
+        className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-xs text-red-500 transition hover:bg-red-500/5"
       >
         <Trash2 size={14} />
         Delete job
@@ -594,22 +721,24 @@ function JobMenu({
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
    STATUS BADGE
-------------------------------------------------- */
+========================================================= */
 
 function StatusBadge({ status }: { status: EmployerJob["status"] }) {
   const active = status === "active";
 
   return (
     <span
-      className={`inline-flex items-center gap-2 text-xs font-medium ${
-        active ? "text-emerald-400" : "text-[var(--muted-foreground)]"
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+        active
+          ? "bg-[var(--success-light)] text-[var(--success)]"
+          : "bg-[var(--surface-soft)] text-[var(--text-muted)]"
       }`}
     >
       <span
         className={`h-1.5 w-1.5 rounded-full ${
-          active ? "bg-emerald-400" : "bg-[var(--muted-foreground)]"
+          active ? "bg-[var(--success)]" : "bg-[var(--text-muted)]"
         }`}
       />
 
@@ -618,9 +747,9 @@ function StatusBadge({ status }: { status: EmployerJob["status"] }) {
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
    LOADING
-------------------------------------------------- */
+========================================================= */
 
 function LoadingRows() {
   return (
@@ -630,13 +759,10 @@ function LoadingRows() {
           key={item}
           className="grid grid-cols-[minmax(0,2fr)_1fr_1fr_auto] gap-6 px-6 py-6"
         >
-          <div className="h-10 animate-pulse rounded-lg bg-[var(--surface-elevated)]" />
-
-          <div className="h-5 animate-pulse rounded bg-[var(--surface-elevated)]" />
-
-          <div className="h-5 animate-pulse rounded bg-[var(--surface-elevated)]" />
-
-          <div className="h-5 w-24 animate-pulse rounded bg-[var(--surface-elevated)]" />
+          <div className="h-11 animate-pulse rounded-xl bg-[var(--surface-soft)]" />
+          <div className="h-5 animate-pulse rounded bg-[var(--surface-soft)]" />
+          <div className="h-5 animate-pulse rounded bg-[var(--surface-soft)]" />
+          <div className="h-8 w-28 animate-pulse rounded bg-[var(--surface-soft)]" />
         </div>
       ))}
     </div>
@@ -649,38 +775,50 @@ function MobileLoading() {
       {[1, 2, 3].map((item) => (
         <div
           key={item}
-          className="h-32 animate-pulse rounded-xl bg-[var(--surface-elevated)]"
+          className="h-32 animate-pulse rounded-xl bg-[var(--surface-soft)]"
         />
       ))}
     </div>
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
    EMPTY STATE
-------------------------------------------------- */
+========================================================= */
 
-function EmptyState({ hasSearch }: { hasSearch: boolean }) {
+function EmptyState({
+  hasSearch,
+  hasJobs,
+}: {
+  hasSearch: boolean;
+  hasJobs: boolean;
+}) {
+  const filteredEmpty = hasSearch || hasJobs;
+
   return (
     <div className="px-6 py-16 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--brand)]/10">
-        <Briefcase size={24} className="text-[var(--brand)]" />
+      <div className="relative mx-auto flex h-14 w-14 items-center justify-center">
+        <div className="absolute inset-0 rounded-2xl bg-[var(--primary)]/10 blur-xl" />
+
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--primary)]/10 bg-gradient-to-br from-[var(--primary-light)] to-[var(--accent-light)]">
+          <Briefcase size={24} className="text-[var(--primary)]" />
+        </div>
       </div>
 
-      <h3 className="mt-5 text-base font-semibold">
-        {hasSearch ? "No jobs found" : "No jobs posted yet"}
+      <h3 className="mt-5 text-base font-semibold text-[var(--text-primary)]">
+        {filteredEmpty ? "No jobs found" : "No jobs posted yet"}
       </h3>
 
-      <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--muted)]">
-        {hasSearch
-          ? "Try a different job title or company name."
-          : "Create your first opportunity and let SkillMatch help you find suitable candidates."}
+      <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[var(--text-muted)]">
+        {filteredEmpty
+          ? "Try changing your search or status filter."
+          : "Create your first opportunity and start building your hiring pipeline."}
       </p>
 
-      {!hasSearch && (
+      {!filteredEmpty && (
         <Link
           href="/employer/post-jobs"
-          className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[var(--brand)] px-5 py-2.5 text-sm font-semibold text-[#080A0D] transition hover:bg-[var(--brand-hover)]"
+          className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[var(--primary)]/10 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
         >
           <Plus size={16} />
           Post your first job
@@ -690,14 +828,20 @@ function EmptyState({ hasSearch }: { hasSearch: boolean }) {
   );
 }
 
-/* -------------------------------------------------
+/* =========================================================
    DATE
-------------------------------------------------- */
+========================================================= */
 
 function formatDate(date: string) {
   if (!date) return "—";
 
-  return new Date(date).toLocaleDateString(undefined, {
+  const parsed = new Date(date);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return "—";
+  }
+
+  return parsed.toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
     year: "numeric",
