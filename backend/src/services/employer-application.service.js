@@ -80,3 +80,89 @@ export const getEmployerApplications = (jobId, employerId) =>
 
 export const updateApplicationStatus = (data) =>
   employerApplicationService.updateStatus(data);
+// import db from "../config/db.js";
+// import Application from "../models/application.model.js";
+
+// const ALLOWED_STATUSES = [
+//   "pending",
+//   "reviewing",
+//   "shortlisted",
+//   "rejected",
+//   "accepted",
+// ];
+
+// const validateApplicationId = (applicationId) => {
+//   const parsedId = Number(applicationId);
+
+//   if (!Number.isInteger(parsedId) || parsedId <= 0) {
+//     const error = new Error("Invalid application ID");
+//     error.statusCode = 400;
+//     throw error;
+//   }
+
+//   return parsedId;
+// };
+
+// export const updateEmployerApplicationStatus = async ({
+//   applicationId,
+//   employerId,
+//   status,
+// }) => {
+//   const parsedApplicationId = validateApplicationId(applicationId);
+
+//   if (!ALLOWED_STATUSES.includes(status)) {
+//     const error = new Error("Invalid application status");
+//     error.statusCode = 400;
+//     throw error;
+//   }
+
+//   /*
+//    * Verify that the application exists and that
+//    * the employer owns the job associated with it.
+//    */
+//   const [rows] = await db.execute(
+//     `
+//     SELECT
+//       a.id,
+//       a.job_id,
+//       a.candidate_id,
+//       a.resume_id,
+//       a.cover_letter,
+//       a.status,
+//       a.applied_at,
+//       a.updated_at,
+
+//       j.employer_id
+
+//     FROM applications a
+
+//     INNER JOIN jobs j
+//       ON j.id = a.job_id
+
+//     WHERE a.id = ?
+//       AND j.employer_id = ?
+
+//     LIMIT 1
+//     `,
+//     [parsedApplicationId, employerId],
+//   );
+
+//   if (!rows.length) {
+//     const error = new Error("Application not found");
+//     error.statusCode = 404;
+//     throw error;
+//   }
+
+//   await Application.updateStatus(
+//     parsedApplicationId,
+//     status,
+//   );
+
+//   /*
+//    * Return the updated application.
+//    */
+//   const updatedApplication =
+//     await Application.findById(parsedApplicationId);
+
+//   return updatedApplication;
+// };

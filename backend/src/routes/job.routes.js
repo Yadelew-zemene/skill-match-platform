@@ -20,6 +20,8 @@ import {
 import {
   viewCandidates,
   viewCandidateDetail,
+  viewCandidateProfileImage,
+  
 } from "../controllers/getCandidate.controller.js";
 
 import { viewOrDownloadCandidateResume } from "../controllers/employer-resume.controller.js";
@@ -99,6 +101,14 @@ router.get(
   roleMiddleware("employer"),
   viewCandidateDetail,
 );
+router.get(
+  "/employer/candidates/:jobId/:candidateId/photo",
+  authMiddleware,
+  roleMiddleware("employer"),
+
+  viewCandidateProfileImage,
+);
+
 /*
 |--------------------------------------------------------------------------
 | Candidate Job Browsing

@@ -9,14 +9,14 @@ import {
 const router = express.Router();
 
 router.get(
-  "/jobs/:jobId/applications",
+  "/employer/jobs/:jobId/applications",
   authMiddleware,
   roleMiddleware("employer"),
   getApplicationsForJob,
 );
 
 router.patch(
-  "/applications/:applicationId/status",
+  "/employer/applications/:applicationId/status",
   authMiddleware,
   roleMiddleware("employer"),
   changeApplicationStatus,

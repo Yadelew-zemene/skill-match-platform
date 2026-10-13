@@ -57,24 +57,44 @@ class Application {
       u.email AS candidate_email,
 
       r.original_filename,
-      r.file_path,
 
-      m.score AS match_score
+      CASE
+        WHEN cp.profile_image_path IS NOT NULL THEN 1
+        ELSE 0
+      END AS has_profile_image,
+
+      COALESCE(
+        (
+          SELECT MAX(ms.score)
+          FROM match_scores ms
+          WHERE ms.job_id = a.job_id
+            AND ms.resume_id = a.resume_id
+        ),
+        0
+      ) AS match_score
+
     FROM applications a
-    JOIN users u
+
+    INNER JOIN users u
       ON u.id = a.candidate_id
-    JOIN resumes r
+
+    INNER JOIN resumes r
       ON r.id = a.resume_id
-    LEFT JOIN match_scores m
-      ON m.job_id = a.job_id
-      AND m.resume_id = a.resume_id
+
+    LEFT JOIN candidate_profiles cp
+      ON cp.user_id = a.candidate_id
+
     WHERE a.job_id = ?
+
     ORDER BY a.applied_at DESC
     `,
       [jobId],
     );
 
-    return rows;
+    return rows.map((application) => ({
+      ...application,
+      has_profile_image: Boolean(application.has_profile_image),
+    }));
   }
 
   static async findById(applicationId) {
@@ -103,7 +123,9 @@ class Application {
     const [result] = await db.execute(
       `
     UPDATE applications
-    SET status = ?
+    SET
+      status = ?,
+      updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
     `,
       [status, applicationId],
@@ -111,6 +133,7 @@ class Application {
 
     return result;
   }
+
   static async findByCandidateId(candidateId) {
     const [rows] = await db.query(
       `

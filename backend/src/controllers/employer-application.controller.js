@@ -66,3 +66,42 @@ export const changeApplicationStatus = async (req, res) => {
     });
   }
 };
+// import { updateEmployerApplicationStatus } from "../services/employer-application.service.js";
+
+// export const updateApplicationStatus = async (req, res) => {
+//   try {
+//     const applicationId = Number(req.params.applicationId);
+//     const { status } = req.body;
+
+//     if (!Number.isInteger(applicationId) || applicationId <= 0) {
+//       return res.status(400).json({
+//         message: "Invalid application ID",
+//       });
+//     }
+
+//     if (typeof status !== "string") {
+//       return res.status(400).json({
+//         message: "Status is required",
+//       });
+//     }
+
+//     const application = await updateEmployerApplicationStatus({
+//       applicationId,
+//       employerId: req.user.id,
+//       status: status.trim().toLowerCase(),
+//     });
+
+//     return res.status(200).json({
+//       message: "Application status updated successfully",
+//       application,
+//     });
+//   } catch (error) {
+//     console.error("UPDATE APPLICATION STATUS ERROR:", error);
+
+//     return res.status(error.statusCode || 500).json({
+//       message: error.statusCode
+//         ? error.message
+//         : "Failed to update application status",
+//     });
+//   }
+// };
