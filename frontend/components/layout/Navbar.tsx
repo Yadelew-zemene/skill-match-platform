@@ -1,95 +1,124 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
 import { getDashboardRoute } from "@/utils/redirect";
+
+const navItems = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "How it works", href: "/#how-it-works" },
+  { label: "Candidates", href: "/#candidates" },
+  { label: "Employers", href: "/#employers" },
+  { label: "Contact", href: "/contacts" },
+];
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close mobile navigation on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [mobileOpen]);
 
   const closeMobile = () => setMobileOpen(false);
 
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    if (href.startsWith("/#")) {
+      return pathname === "/";
+    }
+    return pathname.startsWith(href);
+  };
+
+  const handleDashboard = () => {
+    closeMobile();
+    if (user?.role) {
+      router.push(getDashboardRoute(user.role));
+    }
+  };
+
+  const handleLogout = () => {
+    closeMobile();
+    logout();
+  };
+
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
-        {/* LOGO */}
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur-md backdrop-saturate-150 transition-all">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
         <Link
           href="/"
           onClick={closeMobile}
-          className="flex items-center gap-2.5"
+          aria-label="SkillMatch home"
+          className="group flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--brand)] text-sm font-black text-[#080A0D]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--primary)] text-sm font-black text-white shadow-sm shadow-[var(--primary)]/20 transition-transform duration-200 group-hover:scale-105">
             S
           </div>
-
-          <span className="text-xl font-bold tracking-tight text-[var(--foreground)]">
-            Skill<span className="text-[var(--brand)]">Match</span>
+          <span className="text-lg font-extrabold tracking-tight text-[var(--text-primary)]">
+            Skill<span className="text-[var(--primary)]">Match</span>
           </span>
         </Link>
 
-        {/* DESKTOP NAVIGATION */}
-        <nav className="hidden items-center gap-7 md:flex">
-          <Link
-            href="/"
-            className="text-sm font-medium text-[var(--muted)] transition hover:text-[var(--foreground)]"
-          >
-            Home
-          </Link>
+        {/* Desktop Navigation */}
+        <nav
+          aria-label="Main navigation"
+          className="hidden items-center gap-1 rounded-full border border-[var(--border)]/50 bg-[var(--surface-soft)]/50 p-1 backdrop-blur-sm md:flex"
+        >
+          {navItems.map((item) => {
+            const active = isActive(item.href);
 
-          <Link
-            href="/about"
-            className="text-sm font-medium text-[var(--muted)] transition hover:text-[var(--foreground)]"
-          >
-            About
-          </Link>
-
-          <Link
-            href="/#how-it-works"
-            className="text-sm font-medium text-[var(--muted)] transition hover:text-[var(--foreground)]"
-          >
-            How it works
-          </Link>
-
-          <Link
-            href="/#candidates"
-            className="text-sm font-medium text-[var(--muted)] transition hover:text-[var(--foreground)]"
-          >
-            Candidates
-          </Link>
-
-          <Link
-            href="/#employers"
-            className="text-sm font-medium text-[var(--muted)] transition hover:text-[var(--foreground)]"
-          >
-            Employers
-          </Link>
-
-          <Link
-            href="/contacts"
-            className="text-sm font-medium text-[var(--muted)] transition hover:text-[var(--foreground)]"
-          >
-            Contact
-          </Link>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`relative rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] ${
+                  active
+                    ? "bg-[var(--surface)] text-[var(--primary)] shadow-sm"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* DESKTOP ACTIONS */}
-        <div className="hidden items-center gap-3 sm:flex">
+        {/* Desktop Actions */}
+        <div className="hidden items-center gap-2 sm:flex">
           {!user ? (
             <>
               <Link
                 href="/login"
-                className="px-3 py-2 text-sm font-semibold text-[var(--muted)] transition hover:text-[var(--foreground)]"
+                className="rounded-lg px-3.5 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               >
                 Sign in
               </Link>
 
               <Link
                 href="/register"
-                className="rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-semibold text-[#080A0D] transition hover:bg-[var(--brand-hover)]"
+                className="rounded-lg bg-[var(--primary)] px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-[var(--primary)]/20 transition-all duration-200 hover:bg-[var(--primary-hover)] hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               >
                 Get started
               </Link>
@@ -97,15 +126,17 @@ export default function Navbar() {
           ) : (
             <>
               <button
-                onClick={() => router.push(getDashboardRoute(user.role))}
-                className="rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-semibold text-[#080A0D] transition hover:bg-[var(--brand-hover)]"
+                type="button"
+                onClick={handleDashboard}
+                className="rounded-lg bg-[var(--primary)] px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-[var(--primary)]/20 transition-all duration-200 hover:bg-[var(--primary-hover)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               >
                 Dashboard
               </button>
 
               <button
-                onClick={logout}
-                className="px-3 py-2 text-sm font-semibold text-[var(--muted)] transition hover:text-red-400"
+                type="button"
+                onClick={handleLogout}
+                className="rounded-lg border border-[var(--border)] px-3.5 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--error)]/30 hover:bg-[var(--error-light)] hover:text-[var(--error)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--error)]"
               >
                 Logout
               </button>
@@ -113,116 +144,117 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* MOBILE MENU BUTTON */}
+        {/* Mobile Menu Button */}
         <button
           type="button"
           onClick={() => setMobileOpen((open) => !open)}
-          aria-label="Toggle navigation menu"
+          aria-label={
+            mobileOpen ? "Close navigation menu" : "Open navigation menu"
+          }
           aria-expanded={mobileOpen}
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--foreground)] sm:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-secondary)] transition-colors duration-200 hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] sm:hidden"
         >
-          <span className="text-lg">{mobileOpen ? "×" : "☰"}</span>
+          <span
+            aria-hidden="true"
+            className="relative flex h-3.5 w-4 flex-col justify-between"
+          >
+            <span
+              className={`h-0.5 w-full rounded-full bg-current transition-transform duration-200 ease-in-out ${
+                mobileOpen ? "translate-y-[6px] rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`h-0.5 w-full rounded-full bg-current transition-opacity duration-200 ${
+                mobileOpen ? "opacity-0" : ""
+              }`}
+            />
+            <span
+              className={`h-0.5 w-full rounded-full bg-current transition-transform duration-200 ease-in-out ${
+                mobileOpen ? "-translate-y-[6px] -rotate-45" : ""
+              }`}
+            />
+          </span>
         </button>
       </div>
 
-      {/* MOBILE NAVIGATION */}
+      {/* Mobile Drawer Overlay */}
       {mobileOpen && (
-        <div className="border-t border-[var(--border)] bg-[var(--background)] sm:hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col px-6 py-4">
-            <Link
-              href="/"
-              onClick={closeMobile}
-              className="border-b border-[var(--border)] py-3 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]"
-            >
-              Home
-            </Link>
-
-            <Link
-              href="/about"
-              onClick={closeMobile}
-              className="border-b border-[var(--border)] py-3 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]"
-            >
-              About
-            </Link>
-
-            <Link
-              href="/#how-it-works"
-              onClick={closeMobile}
-              className="border-b border-[var(--border)] py-3 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]"
-            >
-              How it works
-            </Link>
-
-            <Link
-              href="/#candidates"
-              onClick={closeMobile}
-              className="border-b border-[var(--border)] py-3 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]"
-            >
-              Candidates
-            </Link>
-
-            <Link
-              href="/#employers"
-              onClick={closeMobile}
-              className="border-b border-[var(--border)] py-3 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]"
-            >
-              Employers
-            </Link>
-
-            <Link
-              href="/contacts"
-              onClick={closeMobile}
-              className="border-b border-[var(--border)] py-3 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]"
-            >
-              Contact
-            </Link>
-
-            <div className="flex flex-col gap-3 pt-4">
-              {!user ? (
-                <>
-                  <Link
-                    href="/login"
-                    onClick={closeMobile}
-                    className="rounded-lg border border-[var(--border)] px-4 py-3 text-center text-sm font-semibold text-[var(--foreground)]"
-                  >
-                    Sign in
-                  </Link>
-
-                  <Link
-                    href="/register"
-                    onClick={closeMobile}
-                    className="rounded-lg bg-[var(--brand)] px-4 py-3 text-center text-sm font-semibold text-[#080A0D]"
-                  >
-                    Get started
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      closeMobile();
-                      router.push(getDashboardRoute(user.role));
-                    }}
-                    className="rounded-lg bg-[var(--brand)] px-4 py-3 text-sm font-semibold text-[#080A0D]"
-                  >
-                    Dashboard
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      closeMobile();
-                      logout();
-                    }}
-                    className="rounded-lg border border-[var(--border)] px-4 py-3 text-sm font-semibold text-[var(--muted)]"
-                  >
-                    Logout
-                  </button>
-                </>
-              )}
-            </div>
-          </nav>
-        </div>
+        <div
+          onClick={closeMobile}
+          aria-hidden="true"
+          className="fixed inset-0 top-16 z-40 bg-black/20 backdrop-blur-sm sm:hidden"
+        />
       )}
+
+      {/* Mobile Navigation Panel */}
+      <div
+        className={`absolute left-0 right-0 top-16 z-50 border-b border-[var(--border)] bg-[var(--surface)] px-4 py-6 shadow-xl transition-all duration-200 ease-in-out sm:hidden ${
+          mobileOpen
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-2 pointer-events-none opacity-0"
+        }`}
+      >
+        <nav aria-label="Mobile navigation" className="flex flex-col space-y-1">
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-semibold transition-colors duration-150 ${
+                  active
+                    ? "bg-[var(--primary-light)] text-[var(--primary)]"
+                    : "text-[var(--text-secondary)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                <span>{item.label}</span>
+                {active && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--primary)]" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Mobile Action Buttons */}
+        <div className="mt-6 border-t border-[var(--border)] pt-4">
+          {!user ? (
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                href="/login"
+                className="flex items-center justify-center rounded-lg border border-[var(--border)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--text-primary)] transition-colors hover:bg-[var(--surface-soft)]"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/register"
+                className="flex items-center justify-center rounded-lg bg-[var(--primary)] px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--primary-hover)]"
+              >
+                Get started
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2.5">
+              <button
+                type="button"
+                onClick={handleDashboard}
+                className="w-full rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--primary-hover)]"
+              >
+                Dashboard
+              </button>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="w-full rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-semibold text-[var(--text-secondary)] transition-colors hover:border-[var(--error)]/30 hover:bg-[var(--error-light)] hover:text-[var(--error)]"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </header>
   );
 }

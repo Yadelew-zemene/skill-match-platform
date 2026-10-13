@@ -6,43 +6,43 @@
 
 :root {
   /* Brand */
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #eef2ff;
+  --primary: #3157d5;
+  --primary-hover: #2443a8;
+  --primary-light: #eaf0ff;
 
-  --accent: #06b6d4;
-  --accent-light: #ecfeff;
+  --accent: #08a6a6;
+  --accent-light: #e6f8f7;
 
   /* Backgrounds */
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f7f9fc;
+  --foreground: #172033;
 
   --surface: #ffffff;
   --surface-elevated: #ffffff;
-  --surface-soft: #f1f5f9;
+  --surface-soft: #f2f5f9;
 
   /* Text */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --text-disabled: #94a3b8;
+  --text-primary: #172033;
+  --text-secondary: #475467;
+  --text-muted: #667085;
+  --text-disabled: #98a2b3;
 
   /* Borders */
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-  --border-strong: #cbd5e1;
+  --border: #e4e7ec;
+  --border-light: #f0f2f5;
+  --border-strong: #d0d5dd;
 
   /* Semantic */
-  --success: #16a34a;
-  --success-light: #f0fdf4;
+  --success: #12b76a;
+  --success-light: #ecfdf3;
 
-  --warning: #d97706;
-  --warning-light: #fffbeb;
+  --warning: #f79009;
+  --warning-light: #fffaeb;
 
-  --error: #dc2626;
-  --error-light: #fef2f2;
+  --error: #f04438;
+  --error-light: #fef3f2;
 
-  --info: #0284c7;
+  --info: #0ba5ec;
   --info-light: #f0f9ff;
 
   /* Radius */
@@ -52,8 +52,8 @@
   --radius-xl: 16px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.07);
 }
 
 /* =========================================================
@@ -80,7 +80,6 @@ body {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -135,10 +134,202 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d0d5dd;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #98a2b3;
+}
+/* =========================================================
+   SkillMatch Motion System
+========================================================= */
+
+@keyframes skillmatch-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+@keyframes skillmatch-float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(18px, -12px, 0) scale(1.04);
+  }
+}
+
+@keyframes skillmatch-pulse-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.65;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes skillmatch-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes skillmatch-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes skillmatch-border {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.skillmatch-gradient-text {
+  background: linear-gradient(
+    110deg,
+    var(--primary),
+    var(--accent),
+    var(--primary)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: skillmatch-gradient 7s ease infinite;
+}
+
+.skillmatch-gradient-bg {
+  background: linear-gradient(
+    120deg,
+    var(--primary),
+    var(--accent),
+    var(--primary-hover)
+  );
+  background-size: 200% 200%;
+  animation: skillmatch-gradient 8s ease infinite;
+}
+
+.skillmatch-float {
+  animation: skillmatch-float 6s ease-in-out infinite;
+}
+
+.skillmatch-float-slow {
+  animation: skillmatch-float-slow 9s ease-in-out infinite;
+}
+
+.skillmatch-pulse-glow {
+  animation: skillmatch-pulse-glow 5s ease-in-out infinite;
+}
+
+.skillmatch-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.skillmatch-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.18),
+    transparent
+  );
+  transform: translateX(-120%);
+  animation: skillmatch-shimmer 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.skillmatch-gradient-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.skillmatch-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    var(--primary),
+    var(--accent),
+    var(--primary)
+  );
+  background-size: 200% 200%;
+  animation: skillmatch-border 7s ease infinite;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.skillmatch-gradient-border:hover::before {
+  opacity: 0.75;
+}
+
+.skillmatch-glow {
+  transition:
+    box-shadow 300ms ease,
+    transform 300ms ease,
+    border-color 300ms ease;
+}
+
+.skillmatch-glow:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 45px rgb(15 23 42 / 0.08),
+    0 0 0 1px rgb(79 70 229 / 0.08),
+    0 0 35px rgb(79 70 229 / 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skillmatch-gradient-text,
+  .skillmatch-gradient-bg,
+  .skillmatch-float,
+  .skillmatch-float-slow,
+  .skillmatch-pulse-glow,
+  .skillmatch-shimmer,
+  .skillmatch-gradient-border::before {
+    animation: none;
+  }
+
+  .skillmatch-glow {
+    transition: none;
+  }
 }
