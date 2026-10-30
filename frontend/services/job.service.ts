@@ -1,6 +1,7 @@
 import api from "./api";
 import {
   CandidateJobsResponse,
+  CandidateJobFilters,
   CandidateJob,
 } from "@/types/jobs";
 
@@ -411,22 +412,32 @@ export const fetchCandidateMatches = async (
   return res.data;
 };
 
+
+
 export const fetchCandidateJobs = async (
   page = 1,
   limit = 10,
+  filters: CandidateJobFilters = {},
 ): Promise<CandidateJobsResponse> => {
+  const params = {
+    page,
+    limit,
+    ...(filters.search?.trim()
+      ? { search: filters.search.trim() }
+      : {}),
+    ...(filters.skill?.trim()
+      ? { skill: filters.skill.trim() }
+      : {}),
+  };
+
   const res = await api.get<CandidateJobsResponse>(
     "/jobs",
-    {
-      params: {
-        page,
-        limit,
-      },
-    },
+    { params },
   );
 
   return res.data;
 };
+
 
 export const fetchCandidateJob = async (
   jobId: number,
