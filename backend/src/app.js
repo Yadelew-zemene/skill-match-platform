@@ -9,6 +9,7 @@ import applicationRoutes from "./routes/application.routes.js";
 import employerApplicationRoutes from "./routes/employer-application.routes.js";
 
 import candidateProfileRoutes from "./routes/candidate-profile.routes.js";
+import employerProfileRoutes from "./routes/employer-profile.routes.js";
 
 const app = express();
 app.use(
@@ -27,4 +28,5 @@ app.use("/candidate", candidateDashboardRoutes);
 app.use("/api/applications", applicationRoutes)
 app.use("/api", employerApplicationRoutes);
 app.use("/api/candidate/profile", candidateProfileRoutes);
+app.use("/api/employer/profile", employerProfileRoutes);
 export default app;
