@@ -13,6 +13,7 @@ import {
   X,
   ArrowUpRight,
   Sparkles,
+  Building2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -44,7 +45,11 @@ export default function EmployerLayout({
       href: "/employer/jobs-posted",
       icon: Briefcase,
     },
-   
+    {
+      name: "Company profile",
+      href: "/employer/profile",
+      icon: Building2,
+    },
   ];
 
   const handleLogout = () => {
@@ -92,6 +97,12 @@ export default function EmployerLayout({
       return {
         eyebrow: "Employer workspace",
         title: "Manage your jobs",
+      };
+    }
+    if (pathname === "/employer/profile") {
+      return {
+        eyebrow: "Employer workspace",
+        title: "Make uptodate company Profile",
       };
     }
 
