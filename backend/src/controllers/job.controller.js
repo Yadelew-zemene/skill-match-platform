@@ -40,40 +40,98 @@ export const createJobController = ({
 
 
   };
+
 export const getCandidateJobs = async (req, res) => {
   try {
-    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-    const limit = Math.min(
-      Math.max(parseInt(req.query.limit, 10) || 10, 1),
-      50,
-    );
+    // 1. Validate pagination parameters
+    const pageParam = req.query.page ?? "1";
+    const limitParam = req.query.limit ?? "10";
 
+    const isPositiveInteger = (value) =>
+      typeof value === "string" && /^[1-9]\d*$/.test(value);
+
+    if (!isPositiveInteger(pageParam) || !isPositiveInteger(limitParam)) {
+      return res.status(400).json({
+        message: "Page and limit must be positive integers.",
+      });
+    }
+
+    const page = Number(pageParam);
+    const limit = Number(limitParam);
+
+    if (!Number.isSafeInteger(page) || !Number.isSafeInteger(limit)) {
+      return res.status(400).json({
+        message: "Invalid pagination values.",
+      });
+    }
+
+    if (limit > 50) {
+      return res.status(400).json({
+        message: "Limit cannot exceed 50.",
+      });
+    }
+
+    // 2. Validate search and skill filters
+    const searchParam = req.query.search ?? "";
+    const skillParam = req.query.skill ?? "";
+
+    if (typeof searchParam !== "string" || typeof skillParam !== "string") {
+      return res.status(400).json({
+        message: "Search and skill filters must be strings.",
+      });
+    }
+
+    const search = searchParam.trim();
+    const skill = skillParam.trim();
+
+    if (search.length > 150) {
+      return res.status(400).json({
+        message: "Search cannot exceed 150 characters.",
+      });
+    }
+
+    if (skill.length > 100) {
+      return res.status(400).json({
+        message: "Skill cannot exceed 100 characters.",
+      });
+    }
+
+    // 3. Calculate pagination offset
     const offset = (page - 1) * limit;
 
+    // 4. Fetch jobs matching the filters
+    const filters = { search, skill };
+
     const jobs = await Job.findActiveForCandidate(req.user.id, {
+      ...filters,
       limit,
       offset,
     });
 
-    const total = await Job.countActiveJobs();
+    // 5. Count only jobs matching the same filters
+    const total = await Job.countActiveJobs(filters);
 
-    res.status(200).json({
+    // 6. Calculate filtered pagination
+    const totalPages = Math.ceil(total / limit);
+
+    return res.status(200).json({
       jobs,
       pagination: {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages,
       },
     });
   } catch (error) {
-    console.error("GET CANDIDATE JOBS ERROR", error);
+    console.error("Error fetching candidate jobs:", error);
 
-    res.status(500).json({
-      message: "Failed to fetch jobs",
+    return res.status(500).json({
+      message: "Failed to fetch candidate jobs.",
     });
   }
 };
+
 export const getCandidateJob = async (req, res) => {
   try {
     const jobId = Number(req.params.id);
