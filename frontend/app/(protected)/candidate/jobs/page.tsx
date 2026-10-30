@@ -13,7 +13,9 @@ import {
   ChevronRight,
   RotateCw,
   Sparkles,
+  Search,
 } from "lucide-react";
+
 
 import { fetchCandidateJobs } from "@/services/job.service";
 import { CandidateJob } from "@/types/jobs";
@@ -27,13 +29,21 @@ const CandidateJobsPage = () => {
   const [totalJobs, setTotalJobs] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+const [skillInput, setSkillInput] = useState("");
+
+const [search, setSearch] = useState("");
+const [skill, setSkill] = useState("");
 
   const loadJobs = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const data = await fetchCandidateJobs(page, PAGE_SIZE);
+      const data = await fetchCandidateJobs(page, PAGE_SIZE, {
+        search,
+        skill,
+      });
 
       setJobs(data.jobs);
       setTotalPages(data.pagination.totalPages);
@@ -45,7 +55,21 @@ const CandidateJobsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, search, skill]);
+
+  const handleApplyFilters = () => {
+  setPage(1);
+  setSearch(searchInput.trim());
+  setSkill(skillInput.trim());
+};
+
+const handleClearFilters = () => {
+  setSearchInput("");
+  setSkillInput("");
+  setSearch("");
+  setSkill("");
+  setPage(1);
+};
 
   useEffect(() => {
     loadJobs();
@@ -187,6 +211,158 @@ const CandidateJobsPage = () => {
           </div>
         </section>
 
+        {/* Job Search and Filters */}
+        <section className="group relative isolate mb-8 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-sm)] transition-all duration-300 hover:shadow-xl hover:shadow-indigo-950/[0.04]">
+          {/* Ambient background effects */}
+          <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+            <div className="absolute -left-20 -top-24 h-64 w-64 rounded-full bg-indigo-500/[0.09] blur-[85px]" />
+            <div className="absolute -right-16 top-0 h-64 w-64 rounded-full bg-cyan-400/[0.09] blur-[85px]" />
+            <div className="absolute bottom-0 left-1/3 h-40 w-64 rounded-full bg-violet-500/[0.04] blur-[75px]" />
+
+            {/* Subtle grid */}
+            <div
+              className="absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
+                backgroundSize: "32px 32px",
+              }}
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.025] via-transparent to-cyan-500/[0.035]" />
+          </div>
+
+          {/* Gradient top accent */}
+          <div className="h-1 w-full bg-gradient-to-r from-indigo-600 via-violet-500 to-cyan-400" />
+
+          <div className="relative p-5 sm:p-7">
+            {/* Header */}
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600/15 to-cyan-500/15 text-indigo-600 shadow-inner dark:text-indigo-300">
+                  <Search className="h-5 w-5" />
+                </div>
+
+                <div>
+                  <div className="mb-1 flex flex-wrap items-center gap-2">
+                    {/* <h2 className="text-lg font-bold tracking-tight text-[var(--text-primary)] sm:text-xl">
+                      Find your next opportunity
+                    </h2> */}
+
+                    <span className="rounded-full border border-indigo-500/15 bg-indigo-500/[0.07] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-300">
+                      Job discovery
+                    </span>
+                  </div>
+
+                  <p className="max-w-xl text-sm leading-6 text-[var(--text-secondary)]">
+                    Discover opportunities that match your experience. Search by
+                    job title, company, description, or required skills.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Search fields */}
+            <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+              {/* Search */}
+              <div className="min-w-0">
+                <label
+                  htmlFor="job-search"
+                  className="mb-2 block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]"
+                >
+                  Search opportunities
+                </label>
+
+                <div className="group/input relative">
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)] transition-colors group-focus-within/input:text-[var(--primary)]" />
+
+                  <input
+                    id="job-search"
+                    type="text"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleApplyFilters();
+                    }}
+                    placeholder="e.g. Frontend Developer"
+                    className="w-full rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] py-3.5 pl-11 pr-4 text-sm text-[var(--text-primary)] shadow-sm outline-none transition duration-200 placeholder:text-[var(--text-muted)] hover:border-indigo-400/60 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                  />
+                </div>
+              </div>
+
+              {/* Skill */}
+              <div className="min-w-0">
+                <label
+                  htmlFor="job-skill"
+                  className="mb-2 block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]"
+                >
+                  Required skill
+                </label>
+
+                <div className="group/input relative">
+                  <Sparkles className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)] transition-colors group-focus-within/input:text-cyan-600" />
+
+                  <input
+                    id="job-skill"
+                    type="text"
+                    value={skillInput}
+                    onChange={(e) => setSkillInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleApplyFilters();
+                    }}
+                    placeholder="e.g. React, Python"
+                    className="w-full rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] py-3.5 pl-11 pr-4 text-sm text-[var(--text-primary)] shadow-sm outline-none transition duration-200 placeholder:text-[var(--text-muted)] hover:border-cyan-400/60 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10"
+                  />
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-end gap-2 md:col-span-2 lg:col-span-1">
+                <button
+                  type="button"
+                  onClick={handleApplyFilters}
+                  disabled={loading}
+                  className="group/button inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-600 to-cyan-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/25 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                >
+                  <Search className="h-4 w-4 transition-transform group-hover/button:scale-110" />
+                  Search jobs
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleClearFilters}
+                  disabled={loading && !search && !skill}
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm font-semibold text-[var(--text-secondary)] transition hover:border-indigo-400/50 hover:bg-indigo-500/[0.04] hover:text-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            {/* Active filters */}
+            {(search || skill) && (
+              <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-5">
+                <span className="mr-1 text-xs font-semibold text-[var(--text-muted)]">
+                  Active filters
+                </span>
+
+                {search && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/15 bg-indigo-500/[0.07] px-3 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-300">
+                    <Search size={12} />
+                    {search}
+                  </span>
+                )}
+
+                {skill && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/15 bg-cyan-500/[0.07] px-3 py-1.5 text-xs font-semibold text-cyan-700 dark:text-cyan-300">
+                    <Sparkles size={12} />
+                    {skill}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
         {/* ================================================================
             ERROR
         ================================================================= */}
@@ -700,11 +876,11 @@ const CandidateJobsPage = () => {
                                       group-hover/button:translate-x-0.5
                                       group-hover/button:-translate-y-0.5
                                     "
-                                                />
+                          />
 
                           {/* Hover shimmer */}
                           <span
-                          className="
+                            className="
                               pointer-events-none absolute inset-y-0 -left-1/2 w-1/3
                               -skew-x-12 bg-white/15
                               transition-transform duration-700
@@ -725,8 +901,14 @@ const CandidateJobsPage = () => {
             {totalPages > 1 && (
               <section className="mt-12 flex items-center justify-between gap-4 border-t border-[var(--border)] pt-6">
                 <p className="text-xs text-[var(--text-muted)]">
-                  Page <span className="font-medium text-[var(--foreground)]">{page}</span> of{" "}
-                  <span className="font-medium text-[var(--foreground)]">{totalPages}</span>
+                  Page{" "}
+                  <span className="font-medium text-[var(--foreground)]">
+                    {page}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-medium text-[var(--foreground)]">
+                    {totalPages}
+                  </span>
                 </p>
 
                 <div className="flex items-center gap-2">
@@ -751,7 +933,9 @@ const CandidateJobsPage = () => {
                   <button
                     type="button"
                     disabled={page >= totalPages}
-                    onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                    onClick={() =>
+                      setPage((prev) => Math.min(totalPages, prev + 1))
+                    }
                     className="
                       inline-flex items-center gap-1.5
                       rounded-xl border border-[var(--border)]
