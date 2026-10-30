@@ -20,9 +20,14 @@ const CandidateDashboard = () => {
   const { user } = useAuth();
   const { jobs, loading, refresh } = useCandidateJobs();
 
+
   const MAX_DASHBOARD_JOBS = 6;
 
   const topJobs = jobs.slice(0, MAX_DASHBOARD_JOBS);
+ 
+  const uniqueTopJobs = Array.from(
+    new Map(topJobs.map((job) => [job.jobId, job])).values(),
+  );
   const hasMoreJobs = jobs.length > MAX_DASHBOARD_JOBS;
 
   const firstName = user?.name?.split(" ")[0] || "there";
@@ -306,7 +311,7 @@ const CandidateDashboard = () => {
           ) : (
             <>
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-                {topJobs.map((job) => (
+                {uniqueTopJobs.map((job) => (
                   <MatchedJobCard key={job.jobId} job={job} />
                 ))}
               </div>
@@ -316,7 +321,7 @@ const CandidateDashboard = () => {
                   <p className="text-sm text-[var(--text-muted)]">
                     Showing the top{" "}
                     <span className="font-semibold text-[var(--text-primary)]">
-                      {topJobs.length}
+                      {uniqueTopJobs.length}
                     </span>{" "}
                     of{" "}
                     <span className="font-semibold text-[var(--text-primary)]">
@@ -374,6 +379,6 @@ const CandidateDashboard = () => {
       </div>
     </main>
   );
-};
+};;
 
 export default CandidateDashboard;
