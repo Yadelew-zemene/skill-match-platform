@@ -24,6 +24,8 @@ import {
   getCandidateProfilePhoto,
 } from "@/services/profile.service";
 
+import NotificationBell from "@/components/notifications/NotificationBell";
+
 type NavItem = {
   name: string;
   href: string;
@@ -502,21 +504,7 @@ export default function CandidateLayout({
         {/* FOOTER */}
 
         <div className="shrink-0 border-t border-[var(--border)] p-4">
-          <Link
-            href="/"
-            className="
-              mb-1 flex items-center rounded-xl
-              px-3 py-2.5
-              text-xs font-medium
-              text-[var(--text-muted)]
-              transition-all duration-200
-              hover:bg-[var(--surface-soft)]
-              hover:text-[var(--foreground)]
-            "
-          >
-            ← Back to SkillMatch
-          </Link>
-
+        
           <button
             type="button"
             onClick={handleLogout}
@@ -741,20 +729,7 @@ export default function CandidateLayout({
             {/* Mobile footer */}
 
             <div className="shrink-0 border-t border-[var(--border)] p-4">
-              <Link
-                href="/"
-                onClick={handleNavigation}
-                className="
-                  mb-1 flex items-center rounded-xl
-                  px-3 py-2.5
-                  text-xs font-medium
-                  text-[var(--text-muted)]
-                  hover:bg-[var(--surface-soft)]
-                  hover:text-[var(--foreground)]
-                "
-              >
-                ← Back to SkillMatch
-              </Link>
+
 
               <button
                 type="button"
@@ -875,34 +850,12 @@ export default function CandidateLayout({
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             {/* Notifications */}
 
-            <button
-              type="button"
-              aria-label="Notifications"
-              className="
-                relative flex h-10 w-10
-                items-center justify-center
-                rounded-xl
-                border border-[var(--border)]
-                bg-[var(--surface)]
-                text-[var(--text-secondary)]
-                shadow-sm
-                transition-all duration-200
-                hover:border-[var(--border-strong)]
-                hover:bg-[var(--surface-soft)]
-                hover:text-[var(--foreground)]
-              "
-            >
-              <Bell size={18} />
+            <div className="ml-auto flex items-center gap-2 sm:gap-3">
+              {/* Notifications */}
+              <NotificationBell />
 
-              <span
-                className="
-                  absolute right-2.5 top-2.5
-                  h-1.5 w-1.5 rounded-full
-                  bg-[var(--primary)]
-                  shadow-sm shadow-[var(--primary)]/40
-                "
-              />
-            </button>
+              {/* Keep your existing header elements below this point */}
+            </div>
 
             {/* Desktop user */}
 
