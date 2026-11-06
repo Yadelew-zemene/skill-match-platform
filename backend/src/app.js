@@ -11,6 +11,8 @@ import employerApplicationRoutes from "./routes/employer-application.routes.js";
 import candidateProfileRoutes from "./routes/candidate-profile.routes.js";
 import employerProfileRoutes from "./routes/employer-profile.routes.js";
 
+import notificationRoutes from "./routes/notification.routes.js";
+
 const app = express();
 app.use(
   cors({
@@ -27,6 +29,9 @@ app.use("/", jobRoutes);
 app.use("/candidate", candidateDashboardRoutes);
 app.use("/api/applications", applicationRoutes)
 app.use("/api", employerApplicationRoutes);
+
 app.use("/api/candidate/profile", candidateProfileRoutes);
 app.use("/api/employer/profile", employerProfileRoutes);
+
+app.use("/api/notifications", notificationRoutes);
 export default app;
