@@ -7,7 +7,7 @@ import {
   PlusSquare,
   Briefcase,
   LogOut,
-  Bell,
+
   ChevronDown,
   Menu,
   X,
@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+
+import NotificationBell from "@/components/notifications/NotificationBell";
 
 export default function EmployerLayout({
   children,
@@ -457,15 +459,9 @@ export default function EmployerLayout({
             </span>
           </Link>
 
-          <button
-            type="button"
-            className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)]"
-            aria-label="Notifications"
-          >
-            <Bell size={17} />
-
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--primary)]" />
-          </button>
+          {/* Notifications */}
+          
+          <NotificationBell />
         </header>
 
         {/* =======================================================
@@ -488,15 +484,8 @@ export default function EmployerLayout({
           {/* Header actions */}
           <div className="ml-auto flex items-center gap-3">
             {/* Notifications */}
-            <button
-              type="button"
-              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] transition-all duration-300 hover:border-[var(--primary)]/20 hover:bg-[var(--primary-light)] hover:text-[var(--primary)]"
-              aria-label="Notifications"
-            >
-              <Bell size={18} />
-
-              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--primary)] shadow-sm shadow-[var(--primary)]/50" />
-            </button>
+            
+<NotificationBell />
 
             {/* User */}
             <div className="hidden items-center gap-3 border-l border-[var(--border)] pl-4 sm:flex">
