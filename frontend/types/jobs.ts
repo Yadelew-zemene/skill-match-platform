@@ -17,3 +17,8 @@ export interface CandidateJobsResponse {
         totalPages: number;
     };
 }
+
+export interface CandidateJobFilters {
+    search?: string;
+    skill?: string;
+}
