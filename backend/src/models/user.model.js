@@ -38,6 +38,28 @@ class User {
 
     return rows[0] || null;
   }
+  static async updatePassword(userId, hashedPassword) {
+    const sql = `
+    UPDATE users
+    SET password = ?
+    WHERE id = ?
+  `;
+
+    const [result] = await db.execute(sql, [hashedPassword, userId]);
+
+    return result;
+  }
+  static async findByIdWithPassword(userId) {
+    const sql = `
+    SELECT id, password
+    FROM users
+    WHERE id = ?
+  `;
+
+    const [rows] = await db.execute(sql, [userId]);
+
+    return rows[0];
+  }
 }
 
 export default User;
