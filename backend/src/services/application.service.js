@@ -17,7 +17,7 @@ export const createApplicationService =
     notificationCreator = createNotification,
   } = {}) =>
   async ({ jobId, candidateId, resumeId, coverLetter }) => {
-    // 1. Verify the job exists, is active, and retrieve its employer.
+    // Verify the job exists, is active, and retrieve its employer.
     const [jobs] = await database.execute(
       `
       SELECT id, title, employer_id
@@ -35,7 +35,7 @@ export const createApplicationService =
 
     const job = jobs[0];
 
-    // 2. Verify the resume belongs to the candidate.
+    // Verify the resume belongs to the candidate.
     const [resumes] = await database.execute(
       `
       SELECT id
