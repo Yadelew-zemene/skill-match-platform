@@ -407,82 +407,6 @@ export default function CandidateLayout({
           </p>
 
           <nav className="space-y-1">{renderNavItems(workspaceItems)}</nav>
-
-          {/* DISCOVERY CARD */}
-
-          <div className="mt-8">
-            <p
-              className="
-                mb-3 px-3
-                text-[10px] font-semibold uppercase
-                tracking-[0.14em]
-                text-[var(--text-muted)]
-              "
-            >
-              Discover
-            </p>
-
-            <Link
-              href="/candidate/jobs"
-              className="
-                group relative block overflow-hidden
-                rounded-2xl
-                bg-gradient-to-br
-                from-[var(--primary)]
-                to-[var(--accent)]
-                p-px
-                shadow-sm
-                transition-all duration-300
-                hover:-translate-y-0.5
-                hover:shadow-lg
-                hover:shadow-[var(--primary)]/15
-              "
-            >
-              <div
-                className="
-                  relative overflow-hidden
-                  rounded-[15px]
-                  bg-gradient-to-br
-                  from-[var(--primary)]
-                  to-[var(--accent)]
-                  px-4 py-4
-                  text-white
-                "
-              >
-                <div
-                  className="
-                    absolute -right-6 -top-6
-                    h-24 w-24 rounded-full
-                    bg-white/15 blur-2xl
-                    transition-transform duration-500
-                    group-hover:scale-125
-                  "
-                />
-
-                <div className="relative">
-                  <div className="flex items-center gap-2">
-                    <Sparkles size={15} />
-
-                    <span className="text-sm font-semibold">
-                      Find your next role
-                    </span>
-                  </div>
-
-                  <p className="mt-2 text-xs leading-5 text-white/75">
-                    Explore opportunities matched to your skills and experience.
-                  </p>
-
-                  <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold">
-                    Explore jobs
-                    <span className="transition-transform duration-200 group-hover:translate-x-1">
-                      →
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </div>
-
           {/* ACCOUNT */}
 
           <div className="mt-8">
@@ -501,10 +425,10 @@ export default function CandidateLayout({
           </div>
         </div>
 
+        
         {/* FOOTER */}
 
         <div className="shrink-0 border-t border-[var(--border)] p-4">
-        
           <button
             type="button"
             onClick={handleLogout}
@@ -729,8 +653,6 @@ export default function CandidateLayout({
             {/* Mobile footer */}
 
             <div className="shrink-0 border-t border-[var(--border)] p-4">
-
-
               <button
                 type="button"
                 onClick={handleLogout}
