@@ -13,6 +13,7 @@ import candidateProfileRoutes from "./routes/candidate-profile.routes.js";
 import employerProfileRoutes from "./routes/employer-profile.routes.js";
 
 import notificationRoutes from "./routes/notification.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
 
 const app = express();
 
@@ -51,5 +52,6 @@ app.use("/api/candidate/profile", candidateProfileRoutes);
 app.use("/api/employer/profile", employerProfileRoutes);
 
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/contact", contactRoutes);
 
 export default app;
