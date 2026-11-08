@@ -11,6 +11,8 @@ export type ApplicationStatus =
     | "rejected"
     | "accepted";
 
+export type EmployerApplicationStatus = ApplicationStatus;
+
 /* -------------------------------------------------------------------------- */
 /* Candidate - Submit Application                                             */
 /* -------------------------------------------------------------------------- */
