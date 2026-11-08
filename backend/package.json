@@ -5,7 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "node --test test/security.test.js test/schema.test.js test/matching.test.js test/application.test.js test/employer-application.test.js"
+    "test": "node --test test/security.test.js test/schema.test.js test/matching.test.js test/application.test.js test/employer-application.test.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "Yadelew",

@@ -623,31 +623,7 @@ export default function CandidateLayout({
                 <nav className="space-y-1">{renderNavItems(accountItems)}</nav>
               </div>
 
-              <Link
-                href="/candidate/jobs"
-                onClick={handleNavigation}
-                className="
-                  mt-7 block rounded-2xl
-                  bg-gradient-to-br
-                  from-[var(--primary)]
-                  to-[var(--accent)]
-                  p-4 text-white
-                  shadow-lg
-                  shadow-[var(--primary)]/15
-                "
-              >
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} />
-
-                  <span className="text-sm font-semibold">
-                    Find your next role
-                  </span>
-                </div>
-
-                <p className="mt-2 text-xs leading-5 text-white/75">
-                  Explore opportunities matched to your skills and experience.
-                </p>
-              </Link>
+            
             </div>
 
             {/* Mobile footer */}
