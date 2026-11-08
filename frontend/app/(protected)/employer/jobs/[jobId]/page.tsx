@@ -25,9 +25,12 @@ import toast from "react-hot-toast";
 import {
   deleteEmployerJob,
   fetchEmployerJob,
+  fetchEmployerCandidates,
   updateEmployerJobStatus,
   type EmployerJobDetail,
 } from "@/services/job.service";
+
+
 
 export default function EmployerJobDetailPage() {
   const params = useParams();
@@ -36,6 +39,8 @@ export default function EmployerJobDetailPage() {
   const jobId = Number(params.jobId);
 
   const [job, setJob] = useState<EmployerJobDetail | null>(null);
+  const [applicants, setApplicants] = useState<
+    Awaited<ReturnType<typeof fetchEmployerCandidates>>["candidates"]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [notFound, setNotFound] = useState(false);
@@ -52,9 +57,14 @@ export default function EmployerJobDetailPage() {
         setLoading(true);
         setNotFound(false);
 
-        const data = await fetchEmployerJob(jobId);
+       const [jobData, candidatesData] = await Promise.all([
+         fetchEmployerJob(jobId),
+         fetchEmployerCandidates(jobId),
+       ]);
 
-        setJob(data);
+       setJob(jobData);
+        setApplicants(candidatesData.candidates);
+       
       } catch (error) {
         console.error("Failed to load job:", error);
         setNotFound(true);
@@ -128,11 +138,19 @@ export default function EmployerJobDetailPage() {
   }
 
   const isActive = job.status === "active";
+const totalApplicants = applicants.length;
 
-  const totalApplicants = Number(job.applicants ?? 0);
-  const pendingApplications = Number(job.pending_applications ?? 0);
-  const reviewingApplications = Number(job.reviewing_applications ?? 0);
-  const shortlistedApplications = Number(job.shortlisted_applications ?? 0);
+const pendingApplications = applicants.filter(
+  (candidate) => candidate.application_status === "pending",
+).length;
+
+const reviewingApplications = applicants.filter(
+  (candidate) => candidate.application_status === "reviewing",
+).length;
+
+const shortlistedApplications = applicants.filter(
+  (candidate) => candidate.application_status === "shortlisted",
+).length;
 
   return (
     <div className="relative mx-auto max-w-7xl">
