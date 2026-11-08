@@ -318,17 +318,7 @@ export default function EmployerLayout({
             BOTTOM
         ======================================================= */}
         <div className="relative border-t border-[var(--border)] p-4">
-          <Link
-            href="/"
-            className="group mb-2 flex items-center justify-between rounded-xl px-3 py-2 text-xs text-[var(--text-muted)] transition-all duration-300 hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
-          >
-            <span>Back to SkillMatch</span>
-
-            <ArrowUpRight
-              size={14}
-              className="opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            />
-          </Link>
+          
 
           <button
             onClick={handleLogout}
