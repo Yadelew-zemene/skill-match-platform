@@ -114,12 +114,13 @@ export default function EditEmployerJobPage() {
     try {
       setSaving(true);
 
-      const updatedJob = await updateEmployerJob(jobId, {
+      const response = await updateEmployerJob(jobId, {
         title,
         company,
         description,
         application_link: applicationLink,
       });
+      const updatedJob = response.job;
 
       setJob(updatedJob);
 
