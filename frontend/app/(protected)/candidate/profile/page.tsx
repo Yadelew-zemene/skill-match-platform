@@ -250,7 +250,7 @@ export default function CandidateProfilePage() {
     );
   }
 
-  const skills = profile.resume?.skills ?? profile.skills ?? [];
+  const skills = profile.skills ?? [];
 
   return (
     <div className="relative mx-auto w-full max-w-7xl overflow-hidden">
