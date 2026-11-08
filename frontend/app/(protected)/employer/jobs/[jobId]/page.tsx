@@ -74,7 +74,8 @@ export default function EmployerJobDetailPage() {
     try {
       setProcessing(true);
 
-      const updatedJob = await updateEmployerJobStatus(job.id, nextStatus);
+      const response = await updateEmployerJobStatus(job.id, nextStatus);
+      const updatedJob = response.job;
 
       setJob((current) =>
         current
