@@ -352,13 +352,7 @@ export default function JobsPostedPage() {
               </div>
             </div>
 
-            <Link
-              href="/employer/jobs-posted"
-              className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-[var(--primary)] transition hover:text-[var(--primary-hover)]"
-            >
-              Choose a job
-              <ArrowRight size={15} />
-            </Link>
+            
           </div>
         </section>
       )}

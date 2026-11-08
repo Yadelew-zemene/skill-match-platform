@@ -17,6 +17,7 @@ import {
   Sparkles,
   Users,
   XCircle,
+  ArrowUpRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -149,38 +150,40 @@ export default function EmployerCandidatesPage() {
       </div>
 
       <div className="relative mx-auto max-w-7xl">
-        {/* =====================================================
-            TOP NAVIGATION
-        ===================================================== */}
-
-        <div className="mb-6 flex items-center justify-between">
+        {/* TOP NAVIGATION */}
+        <div className="mb-8 flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-center sm:justify-between">
           <Link
             href="/employer/jobs-posted"
-            className="group inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--primary)]"
+            className="group inline-flex w-fit items-center gap-2 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--primary)]"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] transition group-hover:border-[var(--primary)]/30 group-hover:bg-[var(--primary-light)]">
-              <ArrowLeft size={15} />
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] transition group-hover:border-[var(--primary)]/30 group-hover:bg-[var(--primary-light)]">
+              <ArrowLeft size={16} />
             </span>
             Back to jobs
           </Link>
 
           {!loading && data && (
-            <Link
-              href={`/employer/jobs/${jobId}`}
-              className="hidden items-center gap-2 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--primary)] sm:inline-flex"
-            >
-              View job
-              <ArrowRight size={15} />
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href={`/employer/jobs/${jobId}/applications`}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--text-primary)] shadow-sm transition hover:border-[var(--primary)] hover:bg-[var(--primary-light)] hover:text-[var(--primary)]"
+              >
+                <FileText size={16} />
+                Applications
+                <ArrowRight size={14} />
+              </Link>
+
+              <Link
+                href={`/employer/jobs/${jobId}`}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-95"
+              >
+                <Briefcase size={16} />
+                View job
+                <ArrowRight size={14} />
+              </Link>
+            </div>
           )}
         </div>
-        <Link
-          href={`/employer/jobs/${jobId}/applications`}
-          className="inline-flex items-center gap-2 border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--text-primary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)]"
-        >
-          <FileText size={16} />
-          Applications
-        </Link>
 
         {/* =====================================================
             JOB HEADER
