@@ -315,9 +315,11 @@ export const fetchCandidateResume = async (
     },
   );
 
+  const headerContentType = res.headers["content-type"];
   const contentType =
-    res.headers["content-type"] ||
-    "application/octet-stream";
+    typeof headerContentType === "string"
+      ? headerContentType
+      : "application/octet-stream";
 
   const contentDisposition =
     res.headers["content-disposition"] || "";
