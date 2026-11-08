@@ -645,7 +645,7 @@ const CandidateApplicationsPage = () => {
             <div className="space-y-5">
               {filteredApplications.map((application) => (
                 <ApplicationCard
-                  key={application.id}
+                  key={application.application_id}
                   application={application}
                 />
               ))}
