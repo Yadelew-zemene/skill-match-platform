@@ -100,7 +100,8 @@ export default function JobsPostedPage() {
       setProcessingJobId(job.id);
       setOpenMenu(null);
 
-      const updatedJob = await updateEmployerJobStatus(job.id, nextStatus);
+      const response = await updateEmployerJobStatus(job.id, nextStatus);
+      const updatedJob = response.job;
 
       setJobs((current) =>
         current.map((item) =>
