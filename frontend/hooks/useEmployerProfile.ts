@@ -16,7 +16,7 @@ const emptyProfile: EmployerProfile = {
     id: null,
     employer_id: 0,
     company_name: "",
-    description: "",
+    company_description: "",
     industry: "",
     company_size: "",
     location: "",
@@ -30,7 +30,7 @@ const toUpdatePayload = (
     profile: EmployerProfile,
 ): UpdateEmployerProfileData => ({
     company_name: profile.company_name?.trim() ?? "",
-    description: profile.description?.trim() || null,
+    company_description: profile.company_description?.trim() || null,
     industry: profile.industry?.trim() || null,
     company_size: profile.company_size?.trim() || null,
     location: profile.location?.trim() || null,
